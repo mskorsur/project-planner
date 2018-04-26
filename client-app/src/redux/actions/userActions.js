@@ -1,15 +1,18 @@
 import { ADD_USER, UPDATE_USER } from './actionTypes';
+import { generateId } from '../../utils/UuidGenerator';
 
-export function addUser(name) {
+export function addUser(data) {
     return {
         type: ADD_USER,
-        name
+        id: generateId(),
+        ...data
     }
 }
 
-export function updateUser(name) {
+export function updateUser(id, data) {
     return {
         type: UPDATE_USER,
-        name
+        id,
+        ...data
     }
 }
