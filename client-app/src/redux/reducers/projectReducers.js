@@ -41,6 +41,35 @@ function removeProjectById(byIdState, action) {
     return stateWithoutRemovedProject;
 }
 
+function addCardToProject(byIdState, action) {
+    const projectId = action.payload.project;
+    const cardId = action.id;
+
+    const projectCardsWithNewCard = [...byIdState[projectId].cards, cardId];
+    const updatedProject = Object.assign({}, byIdState[projectId], {
+        cards: projectCardsWithNewCard
+    });
+
+    return Object.assign({}, byIdState, {
+        [projectId]: updatedProject
+    });
+}
+
+function removeCardFromProject(byIdState, action) {
+    const projectId = action.user;
+    const cardId = action.id;
+
+    let projectCards = [...byIdState[projectId].cards];
+    let cardsWithoutRemovedCard = projectCards.filter(card => card !== cardId);
+    const updatedProject = Object.assign({}, byIdState[projectId], {
+        cards: cardsWithoutRemovedCard
+    });
+
+    return Object.assign({}, byIdState, {
+        [projectId]: updatedProject
+    });
+}
+
 function addProjectAllIds(allIdsState, action) {
     return [...allIdsState, action.id];
 }
@@ -55,6 +84,8 @@ function reduceById(byIdState, action) {
         case ADD_PROJECT: return addProjectById(byIdState, action);
         case UPDATE_PROJECT: return updateProjectById(byIdState, action);
         case REMOVE_PROJECT: return removeProjectById(byIdState, action);
+        case ADD_CARD: return addCardToProject(byIdState, action);
+        case REMOVE_CARD: return removeCardFromProject(byIdState, action);
         default: return byIdState;
     }
 }
