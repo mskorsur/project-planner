@@ -36,7 +36,9 @@ function addProjectToUser(byIdState, action) {
     const projectId = action.id;
 
     const userProjectsWithNewProject = [...byIdState[userId].projects, projectId];
-    const updatedUser = Object.assign({}, byIdState[userId], userProjectsWithNewProject);
+    const updatedUser = Object.assign({}, byIdState[userId], {
+        projects: userProjectsWithNewProject
+    });
 
     return Object.assign({}, byIdState, {
         [userId]: updatedUser
@@ -49,7 +51,9 @@ function removeProjectFromUser(byIdState, action) {
 
     let userProjects = [...byIdState[userId].projects];
     let projectsWithoutRemovedProject = userProjects.filter(project => project !== projectId);
-    const updatedUser = Object.assign({}, byIdState[userId], projectsWithoutRemovedProject);
+    const updatedUser = Object.assign({}, byIdState[userId], {
+        projects: projectsWithoutRemovedProject
+    });
 
     return Object.assign({}, byIdState, {
         [userId]: updatedUser
