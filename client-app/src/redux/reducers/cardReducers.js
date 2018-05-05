@@ -38,7 +38,7 @@ function removeCardById(byIdState, action) {
     let stateWithoutRemovedCard = {...byIdState};
     delete stateWithoutRemovedCard[cardId];
 
-    return stateWithoutRemovedProject;
+    return stateWithoutRemovedCard;
 }
 
 function addTaskToCard(byIdState, action) {

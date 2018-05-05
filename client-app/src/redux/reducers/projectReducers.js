@@ -29,7 +29,7 @@ function updateProjectById(byIdState, action) {
     const updatedProject = Object.assign({}, byIdState[projectId], ...payload);
 
     return Object.assign({}, byIdState, {
-        [projectId]: updatedUser
+        [projectId]: updatedProject
     });
 }
 
