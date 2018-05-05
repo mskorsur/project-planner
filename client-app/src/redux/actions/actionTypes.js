@@ -1,11 +1,13 @@
 //User actions
 export const ADD_USER = 'ADD_USER';
 export const UPDATE_USER = 'UPDATE_USER';
+export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
 //Project actions
 export const ADD_PROJECT = 'ADD_PROJECT';
 export const UPDATE_PROJECT = 'UPDATE_PROJECT';
 export const REMOVE_PROJECT = 'REMOVE PROJECT';
+export const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT';
 
 //Card actions
 export const ADD_CARD = 'ADD_CARD';
