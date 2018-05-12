@@ -26,7 +26,7 @@ function addProjectById(byIdState, action) {
 function updateProjectById(byIdState, action) {
     const projectId = action.id;
     const { payload } = action;
-    const updatedProject = Object.assign({}, byIdState[projectId], ...payload);
+    const updatedProject = Object.assign({}, byIdState[projectId], payload);
 
     return Object.assign({}, byIdState, {
         [projectId]: updatedProject
@@ -56,7 +56,7 @@ function addCardToProject(byIdState, action) {
 }
 
 function removeCardFromProject(byIdState, action) {
-    const projectId = action.user;
+    const projectId = action.project;
     const cardId = action.id;
 
     let projectCards = [...byIdState[projectId].cards];

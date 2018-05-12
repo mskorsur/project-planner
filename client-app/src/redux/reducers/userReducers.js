@@ -24,7 +24,7 @@ function addUserById(byIdState, action) {
 function updateUserById(byIdState, action) {
     const userId = action.id;
     const { payload } = action;
-    const updatedUser = Object.assign({}, byIdState[userId], ...payload);
+    const updatedUser = Object.assign({}, byIdState[userId], payload);
 
     return Object.assign({}, byIdState, {
         [userId]: updatedUser

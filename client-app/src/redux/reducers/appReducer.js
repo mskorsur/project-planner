@@ -5,14 +5,24 @@ import { taskReducer } from './taskReducers';
 import { currentUserReducer, currentProjectReducer } from './currentSelectionReducers';
 
 const initialState = {
-    currentUser: '',
-    currentProject: '',
+    currentUser: 'Marin',
+    currentProject: 'example',
     users: {
-        byId: {},
+        byId: {
+            'Marin': {
+                id: 'Marin'
+            }
+        },
         allIds: []
     },
     projects: {
-        byId: {},
+        byId: {
+            'example': {
+                id: 'example',
+                name: 'Example project',
+                cards: []
+            }
+        },
         allIds: []
     },
     cards: {

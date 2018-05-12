@@ -26,7 +26,7 @@ function addCardById(byIdState, action) {
 function updateCardById(byIdState, action) {
     const cardId = action.id;
     const { payload } = action;
-    const updatedCard = Object.assign({}, byIdState[cardId], ...payload);
+    const updatedCard = Object.assign({}, byIdState[cardId], payload);
 
     return Object.assign({}, byIdState, {
         [cardId]: updatedCard

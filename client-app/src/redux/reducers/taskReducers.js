@@ -23,7 +23,7 @@ function addTaskById(byIdState, action) {
 function updateTaskById(byIdState, action) {
     const taskId = action.id;
     const { payload } = action;
-    const updatedTask = Object.assign({}, byIdState[taskId], ...payload);
+    const updatedTask = Object.assign({}, byIdState[taskId], payload);
 
     return Object.assign({}, byIdState, {
         [taskId]: updatedTask
