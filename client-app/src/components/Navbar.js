@@ -3,7 +3,7 @@ import React from 'react';
 class Navbar extends React.Component {
     render() {
         return (
-            <nav className="navbar navbar-expand-md navbar-dark bg-blue">
+            <nav className="navbar navbar-expand-md navbar-dark bg-primary">
                 <a className="navbar-brand" href="/">Project Planner</a>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation-toggle" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
@@ -18,8 +18,8 @@ class Navbar extends React.Component {
                         </li>
                     </ul>
                     <div className="justify-content-end">
-                        <button type="button" className="btn btn-outline-warning mr-2"><i class="fas fa-user"></i> Marin</button>
-                        <button type="button" className="btn btn-outline-warning">Log out</button>
+                        <button type="button" className="btn btn-outline-warning mr-2"><i className="fas fa-user"></i> Marin</button>
+                        <button type="button" className="btn btn-outline-warning"><i className="fas fa-sign-out-alt"></i> Log out</button>
                     </div>
                 </div>
             </nav>

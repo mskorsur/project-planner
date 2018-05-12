@@ -4,6 +4,65 @@ body {
   font-family: 'Nunito', sans-serif !important;
 }
 
-.bg-blue {
+.bg-primary {
   background-color:  #0092f6 !important;
+}
+
+.bg-secondary, .btn-primary {
+  background-color: #007bcf !important;
+}
+
+.btn-link {
+  color: #007bcf !important;
+}
+
+.btn-primary:hover, .btn-outline-primary:hover {
+  background-color: #007bcf !important;
+  border-color: #007bcf !important
+}
+
+.bg-light {
+  background-color: #edf6ff !important;
+}
+
+.heading-weight {
+  font-weight: 700 !important;
+}
+
+.heading-color {
+  color: #373d3f !important;
+}
+
+.content-weight {
+  font-weight: 400 !important;
+}
+
+.shadow {
+  box-shadow: 0 4px 6px 1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card {
+  max-width: 25%;
+}
+
+.card-header {
+  padding: 0.5rem 1.25rem !important;
+}
+
+.card > .card-header > h5 {
+  display: inline-block;
+}
+
+.card > .card-header > form {
+  display: inline-block;
+  width: 65%;
+}
+
+.card > .card-header span {
+  cursor: pointer;
+}
+
+.card-footer {
+  background-color: white !important;
+  border-top: 0px !important;
 }
