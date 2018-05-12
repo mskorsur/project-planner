@@ -1,11 +1,15 @@
 import React from 'react';
 
 import Navbar from './components/Navbar';
+import ProjectPage from './containers/ProjectPage';
 
 class App extends React.Component {
     render() {
       return (
-        <Navbar />
+        <div>
+          <Navbar />
+          <ProjectPage /> 
+        </div>
       );
     }
 }
