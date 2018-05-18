@@ -1,7 +1,7 @@
 import { ADD_TASK, UPDATE_TASK, REMOVE_TASK, MOVE_TASK } from './actionTypes';
 import { generateId } from '../../utils/UuidGenerator';
 
-//payload shoud contain task name, description, label, 
+//payload should contain task name, description, label, 
 //steps and owning card's id 
 export function addTask(data) {
     return {

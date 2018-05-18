@@ -26,8 +26,6 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-//add mapDispatchToProps for addTask
-
 class CardContainer extends React.Component {
     constructor(props) {
         super(props);

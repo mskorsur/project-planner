@@ -1,5 +1,7 @@
 import React from 'react';
 
+import TaskContainer from '../containers/TaskContainer';
+
 class Card extends React.Component {
     constructor(props) {
         super(props);
@@ -45,19 +47,16 @@ class Card extends React.Component {
 
     render() {
         return (
-            <div className="card shadow">
-                <div className="card-header bg-secondary text-white">
-                    {this.renderCardName()}
-                    <div className="float-right">
-                        <span className="mr-3" onClick={this.handleEditClick}><i className="fas fa-pencil-alt"></i></span>
-                        <span onClick={this.handleRemoveClick}><i className="fas fa-times"></i></span>
+            <div className="col-xs-12 col-sm-6 col-md-3">
+                <div className="card shadow">
+                    <div className="card-header bg-secondary text-white">
+                        {this.renderCardName()}
+                        <div className="float-right">
+                            <span className="mr-3" onClick={this.handleEditClick}><i className="fas fa-pencil-alt"></i></span>
+                            <span onClick={this.handleRemoveClick}><i className="fas fa-times"></i></span>
+                        </div>
                     </div>
-                </div>
-                <div className="card-body">
-                    <p className="card-text">This is a wider card with supporting text below.</p>
-                </div>
-                <div className="card-footer">
-                    <button type="button" className="btn btn-link float-right"><i className="fas fa-plus"></i> Add task</button>
+                   <TaskContainer />
                 </div>
             </div>
         );
