@@ -22,3 +22,5 @@ export const MOVE_TASK = 'MOVE_TASK';
 
 //Network (async) actions
 //UI actions
+export const ACTIVATE_MODAL = 'ACTIVATE_MODAL';
+export const DEACTIVATE_MODAL = 'DEACTIVATE_MODAL';

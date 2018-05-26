@@ -72,7 +72,7 @@ function removeTaskFromCard(byIdState, action) {
 
 function moveTaskFromSrcToDestCard(byIdState, action) {
     const sourceCardId = action.source;
-    const destinationCardId = action.desstination;
+    const destinationCardId = action.destination;
     const taskId = action.id;
 
     let srcCardTasks = [...byIdState[sourceCardId].tasks];

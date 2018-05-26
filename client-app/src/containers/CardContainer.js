@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { addCard, removeCard, updateCard } from '../redux/actions/cardActions';
-//import { addTask } from '../redux/actions/taskActions';
 
 import CardDeck from '../components/CardDeck';
 import Card from '../components/Card';
@@ -21,7 +20,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         addCard: (data) => {dispatch(addCard(data))},
-        removeCard: (id, project) => {dispatch(removeCard(id, project))},
+        removeCard: (cardId, projectId) => {dispatch(removeCard(cardId, projectId))},
         updateCard: (id, data) => {dispatch(updateCard(id, data))}
     }
 }
@@ -76,14 +75,14 @@ class CardContainer extends React.Component {
         return (
             <div>
                 <div className="row mt-4">
-                        <div className="col">
-                            <form className="form-inline" onSubmit={this.handleCardNameSubmit}>
-                                <label className="sr-only" htmlFor="card-name">Card name</label>
-                                <input type="text" className="form-control mb-1 mr-sm-2" id="card-name" 
-                                value={this.state.cardName} onChange={this.handleCardNameChange} placeholder="Enter card name" />
-                                <button type="button" className="btn btn-outline-primary mb-1" onClick={this.handleAddCardButtonClick}><i className="fas fa-plus"></i> New Card</button>
-                            </form>
-                        </div>
+                    <div className="col">
+                        <form className="form-inline" onSubmit={this.handleCardNameSubmit}>
+                            <label className="sr-only" htmlFor="card-name">Card name</label>
+                            <input type="text" className="form-control mb-1 mr-sm-2" id="card-name" 
+                            value={this.state.cardName} onChange={this.handleCardNameChange} placeholder="Enter card name" />
+                            <button type="button" className="btn btn-outline-primary mb-1" onClick={this.handleAddCardButtonClick}><i className="fas fa-plus"></i> New Card</button>
+                        </form>
+                    </div>
                 </div>
                 {this.renderCardDecks()}
             </div>

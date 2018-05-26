@@ -56,7 +56,7 @@ class Card extends React.Component {
                             <span onClick={this.handleRemoveClick}><i className="fas fa-times"></i></span>
                         </div>
                     </div>
-                   <TaskContainer />
+                   <TaskContainer card={this.props.card}/>
                 </div>
             </div>
         );

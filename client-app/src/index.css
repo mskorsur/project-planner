@@ -73,15 +73,83 @@ body {
 
 .task {
   display: block;
+  cursor: pointer;
   width: 100%;
   height: 35%;
   min-width: 3em;
   background-color: #edf6ff;
   color: #007bcf;
-  border-left: #007bcf solid 0.5em;
 }
 
 .task > h5 {
+  margin-bottom: 0;
+}
+
+.task-default {
+  border-left: #007bcf solid 0.5em;
+}
+
+.task-code {
+  border-left: #61bd4f solid 0.5em;
+}
+
+.task-design {
+  border-left: #c377e0 solid 0.5em;
+}
+
+.task-problem {
+  border-left: #eb5a46 solid 0.5em;
+}
+
+.task-info {
+  border-left: #f2d600 solid 0.5em;
+}
+
+.task-other {
+  border-left: #4d4d4d solid 0.5em;
+}
+
+.label-default {
+  color: #fff;
+  background-color: #007bcf;
+  border-color: #007bcf;
+}
+
+.label-code {
+  color: #fff;
+  background-color: #61bd4f;
+  border-color: #61bd4f;
+}
+
+.label-design {
+  color: #fff;
+  background-color: #c377e0;
+  border-color: #c377e0;
+}
+
+.label-problem {
+  color: #fff;
+  background-color: #eb5a46;
+  border-color: #eb5a46;
+}
+
+.label-info {
+  color: #fff;
+  background-color: #f2d600;
+  border-color: #f2d600;
+}
+
+.label-other {
+  color: #fff;
+  background-color: #4d4d4d;
+  border-color: #4d4d4d;
+}
+
+.alert-border-only {
+  border-color: #c6c8ca;
+}
+
+.label-name {
   margin-bottom: 0;
 }
 

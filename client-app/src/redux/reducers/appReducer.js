@@ -3,6 +3,7 @@ import { projectReducer } from './projectReducers';
 import { cardReducer } from './cardReducers';
 import { taskReducer } from './taskReducers';
 import { currentUserReducer, currentProjectReducer } from './currentSelectionReducers';
+import { uiReducer } from './uiReducers';
 
 const initialState = {
     currentUser: 'Marin',
@@ -32,10 +33,15 @@ const initialState = {
     tasks: {
         byId: {},
         allIds: []
+    },
+    ui: {
+        currentModal: {
+            shouldRender: false,
+            modalType: '',
+            modalData: {},
+            submit: ''
+        }
     }
-    /*
-    ui: {}
-    */
 }
 
 export function appReducer(state = initialState, action) {
@@ -45,6 +51,7 @@ export function appReducer(state = initialState, action) {
         users: userReducer(state.users, action),
         projects: projectReducer(state.projects, action),
         cards: cardReducer(state.cards, action),
-        tasks: taskReducer(state.tasks, action)
+        tasks: taskReducer(state.tasks, action),
+        ui: uiReducer(state.ui, action)
     }
 }
