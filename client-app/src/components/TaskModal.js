@@ -40,7 +40,7 @@ class TaskModal extends React.Component {
                                 cancel={this.handleEditButtonClick}
                                 toggle={this.props.toggle}/>;
         }
-
+        
         if (this.state.isMove) {
             return <MoveTaskForm {...this.props.modalData}
                                 move={this.props.submit[MOVE_TASK]}
@@ -48,7 +48,7 @@ class TaskModal extends React.Component {
                                 cancel={this.handleMoveButtonClick}
                                 toggle={this.props.toggle}/>;
         }
-
+        
         return this.renderTaskData();
     }
 
