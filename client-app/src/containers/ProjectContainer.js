@@ -33,7 +33,7 @@ class ProjectContainer extends React.Component {
                         <button type="button" className="btn btn-primary mx-1 my-1"><i className="far fa-trash-alt"></i> Delete</button>
                     </div>
                 </div>
-                <CardContainer />
+                <CardContainer currentProject={this.props.currentProject}/>
             </Fragment>
         );
     }

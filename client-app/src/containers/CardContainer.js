@@ -6,15 +6,17 @@ import CardDeck from '../components/CardDeck';
 import Card from '../components/Card';
 
 const CARDS_PER_DECK = 4;
-let exampleCard = { 
-    project: 'example'
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        cards: selectCurrentProjectCards(state.cards.byId, ownProps.currentProject.cards),
+    }
 }
 
-const mapStateToProps = state => {
-    return {
-        cardsbyId: state.cards.byId,
-        allCards: state.cards.allIds
-    }
+const selectCurrentProjectCards = (stateCards, currentProjectCardIds) => {
+    return currentProjectCardIds.map(card => {
+        return stateCards[card];
+    });
 }
 
 const mapDispatchToProps = dispatch => {
@@ -39,8 +41,11 @@ class CardContainer extends React.Component {
     }
 
     handleAddCardButtonClick = () => {
-        exampleCard.name = this.state.cardName;
-        this.props.addCard(exampleCard);
+        const newCard = {
+            project: this.props.currentProject.id,
+            name: this.state.cardName
+        }
+        this.props.addCard(newCard);
     }
 
     handleCardNameSubmit = (event) => {
@@ -54,10 +59,10 @@ class CardContainer extends React.Component {
         for (let deckIndex = 0; deckIndex < numberOfDecks; deckIndex++) {
             const cardStartIndex = deckIndex * CARDS_PER_DECK;
             const cardEndIndex = cardStartIndex + CARDS_PER_DECK;
-            const cards = this.props.allCards.slice(cardStartIndex, cardEndIndex);
+            const cards = this.props.cards.slice(cardStartIndex, cardEndIndex);
 
             let cardsToRender = cards.map(card => {
-                return <Card key={card} card={this.props.cardsbyId[card]} edit={this.props.updateCard} remove={this.props.removeCard}/>
+                return <Card key={card.id} card={card} edit={this.props.updateCard} remove={this.props.removeCard}/>
             });
 
             decks.push(<CardDeck key={deckIndex} cards={cardsToRender}/>);
@@ -67,7 +72,7 @@ class CardContainer extends React.Component {
     }
 
     determineNumberOfCardDecks = () => {
-        const numberOfCards = this.props.allCards.length;
+        const numberOfCards = this.props.cards.length;
         return Math.ceil(numberOfCards / CARDS_PER_DECK);
     }
 

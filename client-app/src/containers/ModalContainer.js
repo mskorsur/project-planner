@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { deactivateModal } from '../redux/actions/uiActions';
 
 import TaskModal from '../components/TaskModal';
+import NewProjectModal from '../components/NewProjectModal';
 
 const mapStateToProps = state => {
     return {
@@ -40,11 +41,17 @@ class ModalContainer extends React.Component {
     renderModalBasedOnType = () => {
         switch(this.props.currentModal.modalType) {
             case 'Task Modal': return this.renderTaskModal();
+            case 'New Project Modal': return this.renderNewProjectModal();
+            default: return;
         }
     }
     
     renderTaskModal = () => {
         return <TaskModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>;
+    }
+
+    renderNewProjectModal = () => {
+        return <NewProjectModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>;
     }
 
     render() {

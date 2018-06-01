@@ -11,7 +11,8 @@ const initialState = {
     users: {
         byId: {
             'Marin': {
-                id: 'Marin'
+                id: 'Marin',
+                projects: ['example']
             }
         },
         allIds: []
@@ -21,6 +22,8 @@ const initialState = {
             'example': {
                 id: 'example',
                 name: 'Example project',
+                user: 'Marin',
+                status: 'active',
                 cards: []
             }
         },
