@@ -7,7 +7,10 @@ import { addProject } from '../redux/actions/projectActions';
 import ModalContainer from '../containers/ModalContainer';
 const mapStateToProps = state => {
     return {
-        currentProject: state.currentProject
+        currentProject: state.currentProject,
+        currentUser: {
+            name: state.users.byId[state.currentUser].userName
+        }
     }
 }
 
@@ -35,6 +38,10 @@ class Navbar extends React.Component {
         this.props.history.push('/project/all');
     }
 
+    handleUserPageButtonClick = () => {
+        this.props.history.push('/user');
+    }
+
     render() {
         return (
             <nav className="navbar navbar-expand-md navbar-dark bg-primary">
@@ -52,7 +59,9 @@ class Navbar extends React.Component {
                         </li>
                     </ul>
                     <div className="justify-content-end">
-                        <button type="button" className="btn btn-outline-warning mr-2"><i className="fas fa-user"></i> Marin</button>
+                        <button type="button" className="btn btn-outline-warning mr-2" onClick={this.handleUserPageButtonClick}>
+                            <i className="fas fa-user"></i> {this.props.currentUser.name}
+                        </button>
                         <button type="button" className="btn btn-outline-warning"><i className="fas fa-sign-out-alt"></i> Log out</button>
                     </div>
                 </div>

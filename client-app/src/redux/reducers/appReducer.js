@@ -6,12 +6,18 @@ import { currentUserReducer, currentProjectReducer } from './currentSelectionRed
 import { uiReducer } from './uiReducers';
 
 const initialState = {
-    currentUser: 'Marin',
+    currentUser: 'mskorsur',
     currentProject: 'example',
     users: {
         byId: {
-            'Marin': {
-                id: 'Marin',
+            'mskorsur': {
+                id: 'mskorsur',
+                userName: 'mskorsur',
+                firstName: 'Marin',
+                lastName: 'Skorsur',
+                email: 'm.skorsur@gmail.com',
+                organization: 'FESB',
+                github: 'https://github.com/mskorsur',
                 projects: ['example']
             }
         },
@@ -22,7 +28,7 @@ const initialState = {
             'example': {
                 id: 'example',
                 name: 'Example project',
-                user: 'Marin',
+                user: 'mskorsur',
                 status: 'active',
                 cards: []
             }
