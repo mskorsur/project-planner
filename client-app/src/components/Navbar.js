@@ -9,6 +9,7 @@ const mapStateToProps = state => {
     return {
         currentProject: state.currentProject,
         currentUser: {
+            id: state.currentUser,
             name: state.users.byId[state.currentUser].userName
         }
     }
@@ -26,7 +27,7 @@ class Navbar extends React.Component {
         event.preventDefault();
         const newProjectModal = {
             modalType: 'New Project Modal',
-            modalData: '',
+            modalData: {userId: this.props.currentUser.id},
             submit: this.handleNewProjectSubmit
         }
 
