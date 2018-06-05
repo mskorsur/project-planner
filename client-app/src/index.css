@@ -16,6 +16,17 @@ body {
   color: #007bcf !important;
 }
 
+.btn-outline-warning {
+  border-color: #ffe47a !important;
+  color: #ffe47a !important;
+}
+
+.btn-outline-warning:hover {
+  background-color: #ffe47a !important;
+  border-color: #ffe47a !important;
+  color: #0092f6 !important;
+}
+
 .btn-primary:hover, .btn-outline-primary:hover {
   background-color: #007bcf !important;
   border-color: #007bcf !important
@@ -151,6 +162,22 @@ body {
 
 .label-name {
   margin-bottom: 0;
+}
+
+.section-parent {
+  height: 700px;
+}
+
+.section-top {
+  width: 100%;
+  height: 50%;
+  background: #0092f6;
+}
+
+.section-bottom {
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to bottom,  #0092f6,  #ffe47a);
 }
 
 /* Custom scrollbar */
