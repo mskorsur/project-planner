@@ -35,8 +35,8 @@ class Navbar extends React.Component {
     }
 
     handleNewProjectSubmit = (projectData) => {
+        projectData.history = this.props.history;
         this.props.addProject(projectData);
-        this.props.history.push('/project/all');
     }
 
     handleUserPageButtonClick = () => {

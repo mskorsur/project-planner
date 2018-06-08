@@ -7,7 +7,7 @@ import { uiReducer } from './uiReducers';
 
 const initialState = {
     currentUser: 'mskorsur',
-    currentProject: 'example',
+    currentProject: '',
     users: {
         byId: {
             'mskorsur': {
@@ -18,21 +18,13 @@ const initialState = {
                 email: 'm.skorsur@gmail.com',
                 organization: 'FESB',
                 github: 'https://github.com/mskorsur',
-                projects: ['example']
+                projects: []
             }
         },
         allIds: []
     },
     projects: {
-        byId: {
-            'example': {
-                id: 'example',
-                name: 'Example project',
-                user: 'mskorsur',
-                status: 'active',
-                cards: []
-            }
-        },
+        byId: {},
         allIds: []
     },
     cards: {
