@@ -15,7 +15,21 @@ const mapStateToProps = (state, ownProps) => {
 
 const selectCurrentCardTasks = (stateTasks, cardTasks) => {
     return cardTasks.map(task => {
-        return stateTasks[task];
+        let currentTask = stateTasks[task];
+        if (typeof currentTask.dependencies[0] === 'string') {
+            currentTask.dependencies = selectTaskDependencies(stateTasks, currentTask.dependencies);
+        }
+        
+        return currentTask;
+    });
+}
+
+const selectTaskDependencies = (stateTasks, dependencies) => {
+    return dependencies.map(dep => {
+        return {
+            id: dep,
+            name: stateTasks[dep].name
+        }
     });
 }
 
@@ -47,25 +61,15 @@ class TaskContainer extends React.Component {
     handleTaskItemClick = (item) => {
         const clickedTaskId = item.target.getAttribute('task-id');
         const task = this.props.tasks.find(task => task.id === clickedTaskId);
-        task.dependencies = this.mapTaskDependencyIds(task.dependencies);
-        task.allTasks = this.mapAllTaskIds(this.props.tasks);
-        task.moveTaskCards = this.props.moveTaskCards;
+        const allTasks = this.mapAllTaskIds(this.props.tasks);
+        const moveTaskCards = this.props.moveTaskCards;
 
         const taskModal = {
             modalType: 'Task Modal',
-            modalData: task,
+            modalData: [task, allTasks, moveTaskCards],
             submit: [this.props.updateTask, this.props.removeTask, this.props.moveTask]
         }
         this.props.activateModal(taskModal);
-    }
-
-    mapTaskDependencyIds = (dependencyIds) => {
-        return dependencyIds.map(dep => {
-            return {
-                id: dep,
-                name: this.props.tasks.find(task => task.id === dep).name
-            }
-        });
     }
 
     mapAllTaskIds = (tasks) => {

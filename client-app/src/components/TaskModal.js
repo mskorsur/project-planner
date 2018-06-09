@@ -4,6 +4,7 @@ import { Modal, ModalHeader, ModalBody} from 'reactstrap';
 import EditTaskForm from './EditTaskForm';
 import MoveTaskForm from './MoveTaskForm';
 
+const TASK = 0;
 const UPDATE_TASK = 0;
 const REMOVE_TASK = 1;
 const MOVE_TASK = 2;
@@ -27,8 +28,8 @@ class TaskModal extends React.Component {
     }
 
     handleDeleteButtonClick = () => {
-        const taskId = this.props.modalData.id;
-        const cardId = this.props.modalData.card;
+        const taskId = this.props.modalData[TASK].id;
+        const cardId = this.props.modalData[TASK].card;
         this.props.submit[REMOVE_TASK](taskId, cardId);
         this.props.toggle();
     }
@@ -56,11 +57,11 @@ class TaskModal extends React.Component {
         return (
             <ModalBody>
                 <div className={'alert ' + this.determineTaskLabelStyle()} role="alert">
-                    <h5 className="label-name">{this.props.modalData.label}</h5>
+                    <h5 className="label-name">{this.props.modalData[TASK].label}</h5>
                 </div>
                 <div className="alert alert-border-only" role="alert">
                     <h5>Description</h5>
-                    <p>{this.props.modalData.description}</p>
+                    <p>{this.props.modalData[TASK].description}</p>
                 </div>
                 <div className="alert alert-border-only" role="alert">
                     <h5>Dependencies</h5>
@@ -76,18 +77,18 @@ class TaskModal extends React.Component {
     }
 
     determineTaskLabelStyle = () => {
-        if (this.props.modalData.label === undefined || this.props.modalData.label === 'Default') {
+        if (this.props.modalData[TASK].label === undefined || this.props.modalData[TASK].label === 'Default') {
             return 'label-default';
         }
         else {
-            return `label-${this.props.modalData.label.toLowerCase()}`
+            return `label-${this.props.modalData[TASK].label.toLowerCase()}`
         }
     }
 
     renderTaskDependenciesAsListItems = () => {
         return (
             <ul>
-                {this.props.modalData.dependencies.map(dep => {
+                {this.props.modalData[TASK].dependencies.map(dep => {
                     return <li key={dep.id}>{dep.name}</li>
                 })}
             </ul>
@@ -97,7 +98,7 @@ class TaskModal extends React.Component {
     render() {
         return (
             <Modal isOpen={this.props.shouldRender} toggle={this.props.toggle}>
-                <ModalHeader toggle={this.props.toggle}>{this.props.modalData.name}</ModalHeader>
+                <ModalHeader toggle={this.props.toggle}>{this.props.modalData[TASK].name}</ModalHeader>
                 {this.renderTaskModalBody()}
             </Modal>
         );

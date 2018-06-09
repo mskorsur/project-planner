@@ -1,17 +1,19 @@
 import React from 'react';
 import { ModalBody } from 'reactstrap';
 
+const TASK = 0;
+const ALL_TASKS = 1;
+
 class EditTaskForm extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            name: this.props.name,
-            description: this.props.description,
-            label: this.props.label,
-            dependencies: this.props.dependencies,
-            card: this.props.card,
-            allTasks: this.props.allTasks
+            name: this.props[TASK].name,
+            description: this.props[TASK].description,
+            label: this.props[TASK].label,
+            dependencies: this.props[TASK].dependencies,
+            card: this.props[TASK].card,
         }
     }
 
@@ -33,7 +35,7 @@ class EditTaskForm extends React.Component {
         let newDependencies = [];
         let task = {
             id: taskId,
-            name: this.state.allTasks.find(task => task.id === taskId).name
+            name: this.props[ALL_TASKS].find(task => task.id === taskId).name
         };
 
         if (isChecked) {
@@ -52,21 +54,24 @@ class EditTaskForm extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        const updatedTaskData = {...this.state};
-
-        delete updatedTaskData.allTasks;
+        let updatedTaskData = {...this.state};
         updatedTaskData.dependencies = updatedTaskData.dependencies.map(dep => dep.id);
 
         this.props.toggle();
-        this.props.update(this.props.id, updatedTaskData);
+        this.props.update(this.props[TASK].id, updatedTaskData);
     }
 
     renderCardTasksAsCheckboxes = () => {
-        return this.state.allTasks.filter(task => task.id !== this.props.id).map(task => {
+        let cardTasksWithoutCurrentTask = this.props[ALL_TASKS].filter(task => task.id !== this.props[TASK].id);
+        return this.renderCheckboxes(cardTasksWithoutCurrentTask);
+    }
+
+    renderCheckboxes = (tasks) => {
+        return tasks.map(task => {
             return (
                 <div key={task.id} className="form-group form-check">
                     <input className="form-check-input" type="checkbox" 
-                    value={task.id} id={task.id} checked={this.shouldBeChecked(task.id)} onChange={this.handleDependencyChange}/>
+                    value={task.id} id={task.id} checked={this.isTaskADependency(task.id)} onChange={this.handleDependencyChange}/>
                     <label className="form-check-label" htmlFor={task.id}>
                        {task.name}
                     </label>
@@ -75,14 +80,10 @@ class EditTaskForm extends React.Component {
         });
     }
 
-    shouldBeChecked = (taskId) => {
-        const existingTask = this.state.dependencies.find(dep => dep.id === taskId);
-        if (existingTask !== undefined) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    isTaskADependency = (taskId) => {
+        return this.state.dependencies.find(dep => dep.id === taskId) !== undefined
+        ? true
+        : false
     }
 
     render() {

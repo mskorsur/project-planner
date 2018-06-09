@@ -1,12 +1,15 @@
 import React from 'react';
 import { ModalBody } from 'reactstrap';
 
+const TASK = 0;
+const MOVE_CARDS = 2;
+
 class MoveTaskForm extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            sourceCardId: this.props.card,
+            sourceCardId: this.props[TASK].card,
             destinationCardId: ''
         }
     }
@@ -23,24 +26,30 @@ class MoveTaskForm extends React.Component {
         event.preventDefault();
 
         this.props.toggle();
-        this.props.update(this.props.id, {card: this.state.destinationCardId});
-        this.props.move(this.props.id, this.state.sourceCardId, this.state.destinationCardId);
+        this.props.update(this.props[TASK].id, {card: this.state.destinationCardId});
+        this.props.move(this.props[TASK].id, this.state.sourceCardId, this.state.destinationCardId);
     }
 
     renderCurrentCard = () => {
-        return this.props.moveTaskCards.map(card => {
-            if (card.id === this.props.card) {
+        return this.props[MOVE_CARDS].map(card => {
+            if (card.id === this.state.sourceCardId) {
                 return <option key={card.id} value={card.id}>{card.name}</option>;
             }
         });
     }
 
     renderOtherCardsAsOptions = () => {
-        return this.props.moveTaskCards.map(card => {
-            if (card.id !== this.props.card) {
+        return this.props[MOVE_CARDS].map(card => {
+            if (card.id !== this.state.sourceCardId) {
                 return <option key={card.id} value={card.id}>{card.name}</option>;
             }
         });
+    }
+
+    shouldSubmitButtonBeDisabled = () => {
+        return (this.state.destinationCardId === '' || this.state.destinationCardId === 'initial')
+        ? true
+        : false
     }
 
     render() {
@@ -61,7 +70,9 @@ class MoveTaskForm extends React.Component {
                         </select>
                     </div>
                     <div className="float-right">
-                        <button type="submit" className="btn btn-primary mx-1"><i className="fas fa-check"></i> Submit</button>
+                        <button type="submit" className="btn btn-primary mx-1" disabled={this.shouldSubmitButtonBeDisabled()}>
+                            <i className="fas fa-check"></i> Submit
+                        </button>
                         <button type="button" className="btn btn-outline-primary mx-1" onClick={this.handleCancelButtonClick}>Cancel</button>
                     </div>
                 </form>
