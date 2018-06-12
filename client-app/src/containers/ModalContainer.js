@@ -4,6 +4,7 @@ import { deactivateModal } from '../redux/actions/uiActions';
 
 import TaskModal from '../components/TaskModal';
 import NewProjectModal from '../components/NewProjectModal';
+import DeleteProjectModal from '../components/DeleteProjectModal';
 
 const mapStateToProps = state => {
     return {
@@ -42,6 +43,7 @@ class ModalContainer extends React.Component {
         switch(this.props.currentModal.modalType) {
             case 'Task Modal': return this.renderTaskModal();
             case 'New Project Modal': return this.renderNewProjectModal();
+            case 'Delete Project Modal': return this.renderDeleteProjectModal();
             default: return;
         }
     }
@@ -52,6 +54,10 @@ class ModalContainer extends React.Component {
 
     renderNewProjectModal = () => {
         return <NewProjectModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>;
+    }
+
+    renderDeleteProjectModal = () => {
+        return <DeleteProjectModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>
     }
 
     render() {
