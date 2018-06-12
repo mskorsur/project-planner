@@ -1,6 +1,6 @@
 import React from 'react';
 
-class EditUserForm extends React.Component {
+class UserInfoForm extends React.Component {
     constructor(props) {
         super(props);
 
@@ -45,8 +45,13 @@ class EditUserForm extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        this.props.update(this.props.id, this.state);
-        this.props.cancel();
+        if (this.props.hasOwnProperty('update')) {
+            this.props.update(this.props.id, this.state);
+            this.props.cancel();
+        }
+        else if (this.props.hasOwnProperty('add')) {
+            this.props.add(this.state);
+        }
     }
 
     render() {
@@ -97,4 +102,4 @@ class EditUserForm extends React.Component {
     }
 }
 
-export default EditUserForm
+export default UserInfoForm

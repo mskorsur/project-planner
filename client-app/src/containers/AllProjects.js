@@ -39,7 +39,7 @@ class AllProjects extends React.Component {
         return this.props.currentUserProjects.map((project, index) => {
             return (
                 <tr key={project.id}>
-                    <th scope="row" className="h5">{index + 1}</th>
+                    <th scope="row" className="h5 font-weight-bold">{index + 1}</th>
                     <td className="h5"><Link to={`/project/${project.id}`}>{project.name}</Link></td>
                     <td className="h5 text-capitalize">{project.status}</td>
                     <td className="h5">{project.cards.length}</td>

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { updateUser } from '../redux/actions/userActions';
 
-import EditUserForm from '../components/EditUserForm';
+import UserInfoForm from '../components/UserInfoForm';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 
 const mapStateToProps = state => {
@@ -37,7 +37,7 @@ class UserPage extends React.Component {
 
     renderUserPageBody = () => {
         if (this.state.isEdit) {
-            return <EditUserForm {...this.props.currentUser}
+            return <UserInfoForm {...this.props.currentUser}
                                 update={this.props.updateUser} 
                                 cancel={this.handleEditButtonClick}/>;
         }
