@@ -67,7 +67,9 @@ class ChangePasswordForm extends React.Component {
                     value={this.state.repeatNewPassword} invalid={this.shouldPassBeInvalid()} onChange={this.handleRepeatPasswordChange}/>
                     <FormFeedback>Passwords must match!</FormFeedback>
                 </div>
-                <button type="submit" className="btn btn-primary mx-1"><i className="fas fa-check"></i> Submit</button>
+                <button type="submit" className="btn btn-primary mx-1" disabled={this.shouldPassBeInvalid()}>
+                    <i className="fas fa-check"></i> Submit
+                </button>
                 <button type="button" className="btn btn-outline-primary mx-1" onClick={this.handleCancelButtonClick}>Cancel</button>
             </form>
         );

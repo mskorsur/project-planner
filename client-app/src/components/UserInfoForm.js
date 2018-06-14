@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input, FormFeedback } from 'reactstrap';
 
 class UserInfoForm extends React.Component {
     constructor(props) {
@@ -6,6 +7,8 @@ class UserInfoForm extends React.Component {
 
         this.state = {
             userName: this.props.userName || '',
+            password: '',
+            repeatPassword: '',
             firstName: this.props.firstName || '',
             lastName: this.props.lastName || '',
             email: this.props.email || '',
@@ -16,6 +19,14 @@ class UserInfoForm extends React.Component {
 
     handleUsernameChange = (event) => {
         this.setState({userName: event.target.value});
+    }
+
+    handlePasswordChange = (event) => {
+        this.setState({password: event.target.value});
+    }
+
+    handleRepeatPasswordChange = (event) => {
+        this.setState({repeatPassword: event.target.value});
     }
 
     handleFirstNameChange = (event) => {
@@ -46,11 +57,49 @@ class UserInfoForm extends React.Component {
         event.preventDefault();
 
         if (this.props.hasOwnProperty('update')) {
-            this.props.update(this.props.id, this.state);
+            let updatedData = {...this.state};
+            delete updatedData.password;
+            delete updatedData.repeatPassword;
+            this.props.update(this.props.id, updatedData);
             this.props.cancel();
         }
         else if (this.props.hasOwnProperty('add')) {
             this.props.add(this.state);
+        }
+    }
+
+    renderPasswordFields = () => {
+        //render password fields when adding (sign in page) a new user
+        if (this.props.hasOwnProperty('add')) {
+            return (
+                <div className="form-row">
+                    <div className="form-group col-5">
+                        <label htmlFor="user-password">Password</label>
+                        <Input className="form-control" id="user-password" type="password" required
+                        value={this.state.password} invalid={this.shouldPassBeInvalid()} onChange={this.handlePasswordChange}/>
+                        <FormFeedback>Passwords must match!</FormFeedback>
+                    </div>
+                    <div className="form-group col-5">
+                        <label htmlFor="user-repeat-password">Repeat password</label>
+                        <Input className="form-control" id="user-repeat-password" type="password" required
+                        value={this.state.repeatPassword} invalid={this.shouldPassBeInvalid()} onChange={this.handleRepeatPasswordChange}/>
+                        <FormFeedback>Passwords must match!</FormFeedback>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    shouldPassBeInvalid = () => {
+        if (this.state.password === '' || this.state.repeatPassword === '') {
+            return false;
+        }
+
+        if (this.state.password !== this.state.repeatPassword) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
@@ -64,6 +113,7 @@ class UserInfoForm extends React.Component {
                         value={this.state.userName} onChange={this.handleUsernameChange}/>
                     </div>
                 </div>
+                {this.renderPasswordFields()}
                 <div className="form-row">
                     <div className="form-group col-5">
                         <label htmlFor="user-firstname">First name</label>
