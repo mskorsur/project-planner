@@ -130,7 +130,7 @@ exports.deleteSingleUser = async function(req, res, next) {
     const userId = req.params.id;
 
     try {
-        const deletedUser = await User.findByIdAndRemove(userId);
+        await User.findByIdAndRemove(userId);
         res.status(204).json({message: 'User deleted successfully'});
     }
     catch(err) {
@@ -191,6 +191,7 @@ function escapeAndTrimUserData(req) {
     req.sanitize('lastName').escape();
     req.sanitize('organization').escape();
     req.sanitize('github').escape();
+    req.sanitize('projects').escape();
 
     req.sanitize('id').trim();
     req.sanitize('userName').trim();
@@ -200,4 +201,5 @@ function escapeAndTrimUserData(req) {
     req.sanitize('lastName').trim();
     req.sanitize('organization').trim();
     req.sanitize('github').trim();
+    req.sanitize('projects').trim();
 }
