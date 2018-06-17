@@ -1,4 +1,5 @@
 const Task = require('../models/task');
+const Card = require('../models/card');
 
 exports.getTaskList = async function(req, res, next) {
     try {
@@ -49,12 +50,32 @@ exports.createSingleTask = async function(req, res, next) {
     });
 
     try {
-        await task.save();
-        //find corresponding card and add this task to it
-        res.status(201).json({message: 'Task created successfully', task_data: task});
+        const cardUpdateMsg = await addTaskToContainingCard(task.card, task._id);
+        if (cardUpdateMsg === 'Card update successful during task create') {
+            await task.save();
+            res.status(201).json({message: 'Task created successfully', task_data: task});
+        }
+        else {
+            res.status(409).json({message: 'Task not created, card update failed'});
+        }
     }
     catch(err) {
         return next(err);
+    }
+}
+
+async function addTaskToContainingCard(cardId, taskId) {
+    try {
+        const card = await Card.findById(cardId)
+                    .select({tasks: 1})
+                    .exec();
+        
+        card.tasks = [...card.tasks, taskId];
+        await card.save();
+        return 'Card update successful during task create';
+    }
+    catch(err) {
+        return 'Card update fail during task create';
     }
 }
 
@@ -70,22 +91,36 @@ exports.updateSingleTask = async function(req, res, next) {
     }
 
     try {
-        let foundTask = await Task.findById(taskId)
+        const foundTask = await Task.findById(taskId)
                         .select({__v: 0})
                         .exec();
         
         const originalCard = foundTask.card;
+        const updatedCard = req.body.card;
         foundTask._id = taskId;
         foundTask.name = req.body.name;
         foundTask.description = req.body.description;
         foundTask.label = req.body.label;
         foundTask.dueDate = req.body.dueDate;
         foundTask.dependencies = [...req.body.dependencies.split(',')];
-        foundTask.card = req.body.card;
+        foundTask.card = updatedCard;
 
-        const updatedTask = await foundTask.save();
-        //if originalCard !== updatedTask.card => remove task from original card and add task to new card
-        res.status(200).json({message: 'Task updated successfully', task_data: updatedTask});
+        if (originalCard === updatedCard) {
+            const updatedTask = await foundTask.save();
+            res.status(200).json({message: 'Task updated successfully', task_data: updatedTask});
+            return;
+        }
+        //else, task's card has changed
+        const removeMsg = await removeTaskFromContainingCard(originalCard, taskId);
+        const addMsg = await addTaskToContainingCard(updatedCard, taskId);
+        if (removeMsg === 'Card update successful druing task delete' && addMsg === 'Card update successful during task create') {
+            const updatedTask = await foundTask.save();
+            res.status(200).json({message: 'Task updated successfully', task_data: updatedTask});
+        }
+        else {
+            res.status(409).json({message: 'Task not updated, cards updates failed'});
+        }
+
     }
     catch(err) {
         return next(err);
@@ -96,11 +131,37 @@ exports.deleteSingleTask = async function(req, res, next) {
     const taskId = req.params.id;
 
     try {
-        await Task.findByIdAndRemove(taskId);
-        res.status(204).json({message: 'Task deleted successfully'});
+        const task = await Task.findById(taskId)
+                        .select({card: 1})
+                        .exec();
+        
+        const cardUpdateMsg = await removeTaskFromContainingCard(task.card, taskId);
+        if (cardUpdateMsg === 'Card update successful druing task delete') {
+            await Task.findByIdAndRemove(taskId);
+            res.status(204).json({message: 'Task deleted successfully'});
+        }
+        else {
+            res.status(409).json({message: 'Task not deleted, card update failed'});
+        }
     }
     catch(err) {
         return next(err);
+    }
+}
+
+async function removeTaskFromContainingCard(cardId, taskId) {
+    try {
+        const card = await Card.findById(cardId)
+                    .select({tasks: 1})
+                    .exec();
+        
+        const tasksWithoutDeletedTask = card.tasks.filter(task => task !== taskId);
+        card.tasks = [...tasksWithoutDeletedTask];
+        await card.save();
+        return 'Card update successful druing task delete';
+    }
+    catch(err) {
+        return 'Card update fail during task delete'
     }
 }
 

@@ -85,7 +85,7 @@ exports.updateSingleUser = async function(req, res, next) {
     }
 
     try {
-        let foundUser = await User.findById(userId)
+        const foundUser = await User.findById(userId)
                         .select({password: 0, __v: 0})
                         .exec();
         foundUser._id = userId;
@@ -159,11 +159,11 @@ exports.updateUserProjects = async function(req, res, next) {
 
     try {
         const user = await User.findById(userId)
-                    .select({password: 0, __v: 0})
+                    .select({projects: 1})
                     .exec();
         
         user.projects = [...req.body.projects.split(',')];
-        let updatedUser = await user.save();
+        const updatedUser = await user.save();
         res.status(200).json({message: 'User updated successfully', user_data: updatedUser.projects});
     }
     catch(err) {

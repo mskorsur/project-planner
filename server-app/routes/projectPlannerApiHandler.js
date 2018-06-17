@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userController = require('../controllers/userController');
 const taskController = require('../controllers/taskController');
+const cardController = require('../controllers/cardController');
 
 //User routes and handlers
 router.get('/users/:id/projects', userController.getUserProjects);
@@ -28,6 +29,21 @@ router.delete('/tasks/:id', taskController.deleteSingleTask);
 
 router.get('/tasks', taskController.getTaskList);
 
-router.post('/tasks', taskController.createSingleTask)
+router.post('/tasks', taskController.createSingleTask);
+
+//Card routes and handlers
+router.get('/cards/:id/tasks', cardController.getCardTasks);
+
+router.put('/cards/:id/tasks', cardController.updateCardTasks);
+
+router.get('/cards/:id', cardController.getSingleCard);
+
+router.put('/cards/:id', cardController.updateSingleCard);
+
+router.delete('/cards/:id', cardController.deleteSingleCard);
+
+router.get('/cards', cardController.getCardList);
+
+router.post('/cards', cardController.createSingleCard);
 
 module.exports = router;
