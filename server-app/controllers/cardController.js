@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const Project = require('../models/project');
 
 exports.getCardList = async function(req, res, next) {
     try {
@@ -47,12 +48,32 @@ exports.createSingleCard = async function(req, res, next) {
     });
 
     try {
-        await card.save();
-        //add this card to corresponding project
-        res.status(201).json({message: 'Card created successfully', card_data: card});
+        const projectUpdateMsg = await addCardToContainingProject(card.project, card._id);
+        if (projectUpdateMsg === 'Project update successful during card create') {
+            await card.save();
+            res.status(201).json({message: 'Card created successfully', card_data: card});
+        }
+        else {
+            res.status(409).json({message: 'Card not created, project update fail'});
+        }
     }
     catch(err) {
         return next(err);
+    }
+}
+
+async function addCardToContainingProject(projectId, cardId) {
+    try {
+        const project = await Project.findById(projectId)
+                        .select({cards: 1})
+                        .exec();
+
+        project.cards = [...project.cards, cardId];
+        await project.save();
+        return 'Project update successful during card create';
+    }
+    catch(err) {
+        return 'Project update fail during card create';
     }
 }
 
@@ -75,7 +96,6 @@ exports.updateSingleCard = async function(req, res, next) {
         foundCard._id = req.body.id;
         foundCard.name = req.body.name;
         foundCard.project = req.body.project;
-        //foundCard.tasks = [...req.body.tasks.split(',')];
 
         const updatedCard = await foundCard.save();
         res.status(200).json({message: 'Card updated successfully', card_data: updatedCard});
@@ -89,12 +109,37 @@ exports.deleteSingleCard = async function(req, res, next) {
     const cardId = req.params.id;
 
     try {
-        await Card.findByIdAndRemove(cardId);
-        //delete card from project
-        res.status(204).json({message: 'Card deleted successfully'});
+        const card = await Card.findById(cardId)
+                    .select({project: 1})
+                    .exec();
+        
+        const projectUpdateMsg = await removeCardFromContainingProject(card.project, cardId)
+        if (projectUpdateMsg === 'Project update successful during card delete') {
+            await Card.findByIdAndRemove(cardId);
+            res.status(204).json({message: 'Card deleted successfully'});
+        }
+        else {
+            res.status(409).json({messahe: 'Card not deleted, project update fail'});
+        }
     }
     catch(err) {
         return next(err);
+    }
+}
+
+async function removeCardFromContainingProject(projectId, cardId) {
+    try {
+        const project = await Project.findById(projectId)
+                        .select({cards: 1})
+                        .exec();
+                    
+        const cardsWithoutDeletedCard = project.cards.filter(card => card !== cardId);
+        project.cards = [...cardsWithoutDeletedCard];
+        await project.save();
+        return 'Project update successful during card delete';
+    }
+    catch(err) {
+        return 'Project update fail during card delete';
     }
 }
 

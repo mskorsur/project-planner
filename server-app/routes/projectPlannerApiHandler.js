@@ -4,6 +4,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const taskController = require('../controllers/taskController');
 const cardController = require('../controllers/cardController');
+const projectController = require('../controllers/projectController');
 
 //User routes and handlers
 router.get('/users/:id/projects', userController.getUserProjects);
@@ -45,5 +46,20 @@ router.delete('/cards/:id', cardController.deleteSingleCard);
 router.get('/cards', cardController.getCardList);
 
 router.post('/cards', cardController.createSingleCard);
+
+//Project routes and handlers
+router.get('/projects/:id/cards', projectController.getProjectCards);
+
+router.put('/projects/:id/cards', projectController.updateProjectCards);
+
+router.get('/projects/:id', projectController.getSingleProject);
+
+router.put('/projects/:id', projectController.updateSingleProject);
+
+router.delete('/projects/:id', projectController.deleteSingleProject);
+
+router.get('/projects', projectController.getProjectList);
+
+router.post('/projects', projectController.createSingleProject);
 
 module.exports = router;
