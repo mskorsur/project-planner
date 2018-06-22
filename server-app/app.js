@@ -13,15 +13,18 @@ const projectPlannerApiHandler = require('./routes/projectPlannerApiHandler');
 const app = express();
 
 //Mongoose and MongoDB setup
-const connectionURI = 'mongodb://marin-pp:pp1234@ds161520.mlab.com:61520/project-planner';
+let connectionURI = '';
+process.env.NODE_ENV === 'test'
+? connectionURI = 'mongodb://test-pp:pp1234@ds263740.mlab.com:63740/pp-test'
+: connectionURI = 'mongodb://marin-pp:pp1234@ds161520.mlab.com:61520/project-planner';
 mongoose.connect(connectionURI).then(
-    () => { console.log('MongoDB connection success') },
+    () => { if (process.env.NODE_ENV !== 'test') console.log('MongoDB connection success') },
     err => { console.error.bind(console, 'MongoDB connection error: ' + err) }
 );
 mongoose.Promise = global.Promise;
 
 //Route agnostic middleware
-app.use(logger('dev'));
+if (process.env.NODE_ENV !== 'test') app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
