@@ -36,7 +36,7 @@ exports.createSingleProject = async function(req, res, next) {
     escapeAndTrimProjectData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occured', error: errors});
         return;
     }
 
@@ -44,7 +44,7 @@ exports.createSingleProject = async function(req, res, next) {
         _id: req.body.id,
         name: req.body.name,
         status: req.body.status || 'Active',
-        lastModified: req.body.lastModified,
+        lastModified: req.body.lastModified || Date.now(),
         user: req.body.user,
         cards: []
     });
@@ -86,7 +86,7 @@ exports.updateSingleProject = async function(req, res, next) {
     escapeAndTrimProjectData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occured', error: errors});
         return;
     }
 
@@ -117,6 +117,11 @@ exports.deleteSingleProject = async function(req, res, next) {
                         .select({user: 1})
                         .exec();
         
+        if (project === null) {
+            res.status(409).json({message: 'Project not deleted'});
+            return;
+        }
+        
         const userUpdateMsg = await removeProjectFromContainingUser(project.user, projectId);
         if (userUpdateMsg === 'User update successful during project delete') {
             await Project.findByIdAndRemove(projectId);
@@ -140,7 +145,12 @@ exports.getProjectCards = async function(req, res, next) {
                         .populate({path: 'cards', select: '-__v'})
                         .exec();
 
-        res.status(200).json(project.cards);
+        if (project !== null) {
+            res.status(200).json({cards: project.cards});
+        }
+        else {
+            res.status(409).json({message: 'Project not found'});
+        }
     }
     catch(err) {
         return next(err);
@@ -154,10 +164,15 @@ exports.updateProjectCards = async function(req, res, next) {
         const project = await Project.findById(projectId)
                         .select({cards: 1})
                         .exec();
-            
-        project.cards = [...req.body.cards.split(',')];
-        const updatedProject = await project.save();
-        res.status(200).json({message: 'Project updated succesfully', project_data: updatedProject.cards});
+        
+        if (project != null) {
+            project.cards = [...req.body.cards.split(',')];
+            const updatedProject = await project.save();
+            res.status(200).json({message: 'Project updated successfully', project_data: updatedProject.cards});
+        }
+        else {
+            res.status(409).json({message: 'Project not found'});
+        }
     }
     catch(err) {
         return next(err);
@@ -166,7 +181,7 @@ exports.updateProjectCards = async function(req, res, next) {
 
 async function removeProjectFromContainingUser(userId, projectId) {
     try {
-        const user = await User.find(userId)
+        const user = await User.findById(userId)
                     .select({projects: 1})
                     .exec();
         
