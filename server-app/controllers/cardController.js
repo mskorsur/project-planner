@@ -36,7 +36,7 @@ exports.createSingleCard = async function(req, res, next) {
     escapeAndTrimCardData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occured', error: errors});
         return;
     }
 
@@ -54,7 +54,7 @@ exports.createSingleCard = async function(req, res, next) {
             res.status(201).json({message: 'Card created successfully', card_data: card});
         }
         else {
-            res.status(409).json({message: 'Card not created, project update fail'});
+            res.status(409).json({message: 'Card not created, project update failed'});
         }
     }
     catch(err) {
@@ -84,7 +84,7 @@ exports.updateSingleCard = async function(req, res, next) {
     escapeAndTrimCardData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occured', error: errors});
         return;
     }
 
@@ -113,13 +113,18 @@ exports.deleteSingleCard = async function(req, res, next) {
                     .select({project: 1})
                     .exec();
         
+        if (card === null) {
+            res.status(409).json({message: 'Card not deleted'});
+            return;
+        }
+        
         const projectUpdateMsg = await removeCardFromContainingProject(card.project, cardId)
         if (projectUpdateMsg === 'Project update successful during card delete') {
             await Card.findByIdAndRemove(cardId);
             res.status(204).json({message: 'Card deleted successfully'});
         }
         else {
-            res.status(409).json({messahe: 'Card not deleted, project update fail'});
+            res.status(409).json({message: 'Card not deleted, project update failed'});
         }
     }
     catch(err) {
@@ -152,7 +157,12 @@ exports.getCardTasks = async function(req, res, next) {
                     .populate({path: 'tasks', select: '-__v'})
                     .exec();
         
-        res.status(200).json({tasks: card.tasks});
+        if (card !== null) {
+            res.status(200).json({tasks: card.tasks});
+        }
+        else {
+            res.status(409).json({message: 'Card not found'});
+        }
     }
     catch(err) {
         return next(err);
@@ -167,9 +177,14 @@ exports.updateCardTasks = async function(req, res, next) {
                     .select({tasks: 1})
                     .exec();
         
-        card.tasks = [...req.body.tasks.split(',')];
-        const updatedCard = await card.save();
-        res.status(200).json({message: 'Card updated successfully', card_data: updatedCard.tasks});
+        if (card !== null) {
+            card.tasks = [...req.body.tasks.split(',')];
+            const updatedCard = await card.save();
+            res.status(200).json({message: 'Card updated successfully', card_data: updatedCard.tasks});
+        }
+        else {
+            res.status(409).json({message: 'Card not found'});
+        }
     }
     catch(err) {
         return next(err);
