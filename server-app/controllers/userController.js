@@ -35,13 +35,13 @@ exports.createSingleUser = async function(req, res, next) {
     escapeAndTrimUserData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occured', error: errors});
         return;
     }
 
     const existingUser = await User.findOne({userName: req.body.userName});
     if (existingUser !== null) {
-        res.json({message: 'Username already exists'});
+        res.status(409).json({message: 'Username already exists'});
         return;
     }
 
@@ -74,7 +74,7 @@ exports.updateSingleUser = async function(req, res, next) {
     escapeAndTrimUserData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occured', error: errors});
         return;
     }
 
@@ -94,7 +94,6 @@ exports.updateSingleUser = async function(req, res, next) {
         foundUser.lastName = req.body.lastName;
         foundUser.organization = req.body.organization;
         foundUser.github = req.body.github;
-        foundUser.projects = [...req.body.projects.split(',')];
 
         const updatedUser = await foundUser.save();
         res.status(200).json({message: 'User updated successfully', user_data: updatedUser});
@@ -130,8 +129,13 @@ exports.deleteSingleUser = async function(req, res, next) {
     const userId = req.params.id;
 
     try {
-        await User.findByIdAndRemove(userId);
-        res.status(204).json({message: 'User deleted successfully'});
+        const deletedUser = await User.findByIdAndRemove(userId);
+        if (deletedUser !== null) {
+            res.status(204).json({message: 'User deleted successfully'});
+        }
+        else {
+            res.status(409).json({message: 'User not deleted'});
+        }
     }
     catch(err) {
         return next(err);
@@ -147,7 +151,12 @@ exports.getUserProjects = async function(req, res, next) {
                     .populate({path: 'projects', select: '-__v'})
                     .exec();
         
-        res.status(200).json({projects: user.projects});
+        if (user !== null) {
+            res.status(200).json({projects: user.projects});
+        }
+        else {
+            res.status(409).json({message: 'User not found'});
+        }
     }
     catch(err) {
         return next(err);
@@ -162,9 +171,14 @@ exports.updateUserProjects = async function(req, res, next) {
                     .select({projects: 1})
                     .exec();
         
-        user.projects = [...req.body.projects.split(',')];
-        const updatedUser = await user.save();
-        res.status(200).json({message: 'User updated successfully', user_data: updatedUser.projects});
+        if (user !== null) {
+            user.projects = [...req.body.projects.split(',')];
+            const updatedUser = await user.save();
+            res.status(200).json({message: 'User updated successfully', user_data: updatedUser.projects});
+        }
+        else {
+            res.status(409).json({message: 'User not found'});
+        }
     }
     catch(err) {
         return next(err);
