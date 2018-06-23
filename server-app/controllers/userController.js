@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const createToken = require('../auth/createToken');
 
 exports.getUserList = async function(req, res, next) {
     try {
@@ -8,6 +9,34 @@ exports.getUserList = async function(req, res, next) {
                         .exec();
         
         res.status(200).json(userList);
+    }
+    catch(err) {
+        return next(err);
+    }
+}
+
+exports.loginUser = async function(req, res, next) {
+    const userName = req.body.userName;
+    const password = req.body.password;
+
+    try {
+        const user = await User.findOne({userName: userName})
+                    .select({__v: 0})
+                    .exec();
+        
+        //if user does not exist or wrong password is provided return auth error
+        if (user === null || !user.validPassword(password)) {
+            res.status(401).json({message: 'Auth failed'});
+            return;
+        }
+
+        const token = await createToken({
+            userName: user.userName,
+            email: user.email,
+            name: user.fullName
+        });
+        res.status(200).json({message: 'Auth successful', token: token});
+        //also build and send redux state to user in this response
     }
     catch(err) {
         return next(err);
@@ -60,7 +89,12 @@ exports.createSingleUser = async function(req, res, next) {
     try {
         await user.save();
 
-        res.status(201).json({message: 'User created successfully', user_data: user});
+        const token = await createToken({
+            userName: user.userName,
+            email: user.email,
+            name: user.fullName
+        });
+        res.status(201).json({message: 'User created successfully', user_data: user, token: token});
     }
     catch (err) {
         return next(err);
