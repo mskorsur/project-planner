@@ -10,6 +10,32 @@ const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Project API endpoint', () => {
+    let token = "";
+    //create the token, so that tests can pass auth control
+    before((done) => {
+        User.remove({}, (err) => { 
+            const user = new User({
+                _id: 'userId',
+                userName: 'example',
+                password: 'example123',
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com'
+            });
+            user.password = user.generateHash(user.password);
+    
+            user.save().then(savedUser => {
+                chai.request(api)
+                .post('/api/login')
+                .send({userName: 'example', password: 'example123'})
+                .end((err,res) => {
+                    token = res.body.token;
+                    done();
+                });
+            });   
+        }); 
+    });
+
     beforeEach((done) => { 
         Project.remove({}, (err) => { 
            done();         
@@ -26,6 +52,7 @@ describe('Project API endpoint', () => {
         it('should GET 0 projects when collection is empty', done => {
             chai.request(api)
             .get('/api/projects')
+            .set('Authorization', 'Bearer ' + token)
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.an('array');
@@ -47,6 +74,7 @@ describe('Project API endpoint', () => {
             Project.create(projects, (err, savedProjects) => {
                 chai.request(api)
                 .get('/api/projects')
+                .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.an('array');
@@ -66,6 +94,7 @@ describe('Project API endpoint', () => {
 
             chai.request(api)
                 .post('/api/projects')
+                .set('Authorization', 'Bearer ' + token)
                 .send(project)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -87,6 +116,7 @@ describe('Project API endpoint', () => {
 
             chai.request(api)
                 .post('/api/projects')
+                .set('Authorization', 'Bearer ' + token)
                 .send(project)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -108,6 +138,7 @@ describe('Project API endpoint', () => {
 
             chai.request(api)
                 .post('/api/projects')
+                .set('Authorization', 'Bearer ' + token)
                 .send(project)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -130,6 +161,7 @@ describe('Project API endpoint', () => {
 
             chai.request(api)
                 .post('/api/projects')
+                .set('Authorization', 'Bearer ' + token)
                 .send(project)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -159,6 +191,7 @@ describe('Project API endpoint', () => {
             user.save().then(savedUser => {
                 chai.request(api)
                 .post('/api/projects')
+                .set('Authorization', 'Bearer ' + token)
                 .send(project)
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -191,6 +224,7 @@ describe('Project API endpoint', () => {
             project.save().then(savedProject => {
                 chai.request(api)
                     .get('/api/projects/' + savedProject._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
@@ -218,6 +252,7 @@ describe('Project API endpoint', () => {
             project.save().then(savedProject => {
                 chai.request(api)
                     .get('/api/projects/' + savedProject._id + '1')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.should.have.property('body').eql(null);
@@ -246,6 +281,7 @@ describe('Project API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/projects/' + savedProject._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(projectWithMissingId)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -278,6 +314,7 @@ describe('Project API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/projects/' + savedProject._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(projectWithMissingName)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -310,6 +347,7 @@ describe('Project API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/projects/' + savedProject._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(projectWithMissingUserId)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -345,6 +383,7 @@ describe('Project API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/projects/' + savedProject._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(projectWithFullInfo)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -385,6 +424,7 @@ describe('Project API endpoint', () => {
                 project.save().then(savedProject => {
                     chai.request(api)
                         .del('/api/projects/' + savedProject._id)
+                        .set('Authorization', 'Bearer ' + token)
                         .end((err, res) => {
                             res.should.have.status(204);
                             res.should.have.property('body').which.is.empty;
@@ -415,6 +455,7 @@ describe('Project API endpoint', () => {
                 project.save().then(savedProject => {
                     chai.request(api)
                         .del('/api/projects/' + savedProject._id + '1')
+                        .set('Authorization', 'Bearer ' + token)
                         .end((err, res) => {
                             res.should.have.status(409);
                             res.body.should.be.an('object');
@@ -435,6 +476,7 @@ describe('Project API endpoint', () => {
             project.save().then(savedProject => {
                 chai.request(api)
                     .del('/api/projects/' + savedProject._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
@@ -457,6 +499,7 @@ describe('Project API endpoint', () => {
             project.save().then(savedProject => {
                 chai.request(api)
                     .get('/api/projects/' + savedProject._id + '/cards')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
@@ -477,6 +520,7 @@ describe('Project API endpoint', () => {
             project.save().then(savedProject => {
                 chai.request(api)
                     .get('/api/projects/' + savedProject._id + '1' + '/cards')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
@@ -499,6 +543,7 @@ describe('Project API endpoint', () => {
             project.save().then(savedProject => {
                 chai.request(api)
                     .put('/api/projects/' + savedProject._id + '/cards')
+                    .set('Authorization', 'Bearer ' + token)
                     .send({cards: 'card1,card2'})
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -522,6 +567,7 @@ describe('Project API endpoint', () => {
             project.save().then(savedProject => {
                 chai.request(api)
                     .put('/api/projects/' + savedProject._id + '1' + '/cards')
+                    .set('Authorization', 'Bearer ' + token)
                     .send({cards: 'card1,card2'})
                     .end((err, res) => {
                         res.should.have.status(409);

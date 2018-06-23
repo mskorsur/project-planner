@@ -2,6 +2,7 @@ process.env.NODE_ENV = 'test';
 const mongoose = require('mongoose');
 const Task = require('../models/task');
 const Card = require('../models/card');
+const User = require('../models/user');
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -10,6 +11,32 @@ const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Task API endpoint', () => {
+    let token = "";
+    //create the token, so that tests can pass auth control
+    before((done) => {
+        User.remove({}, (err) => { 
+            const user = new User({
+                _id: 'userId',
+                userName: 'example',
+                password: 'example123',
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com'
+            });
+            user.password = user.generateHash(user.password);
+    
+            user.save().then(savedUser => {
+                chai.request(api)
+                .post('/api/login')
+                .send({userName: 'example', password: 'example123'})
+                .end((err,res) => {
+                    token = res.body.token;
+                    done();
+                });
+            });   
+        }); 
+    });
+
     beforeEach((done) => { 
         Task.remove({}, (err) => { 
            done();         
@@ -26,6 +53,7 @@ describe('Task API endpoint', () => {
         it('should GET 0 tasks when collection is empty', done => {
             chai.request(api)
             .get('/api/tasks')
+            .set('Authorization', 'Bearer ' + token)
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.an('array');
@@ -50,6 +78,7 @@ describe('Task API endpoint', () => {
             Task.create(tasks, (err, savedTasks) => {
                 chai.request(api)
                 .get('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.an('array');
@@ -71,6 +100,7 @@ describe('Task API endpoint', () => {
 
             chai.request(api)
                 .post('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .send(task)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -94,6 +124,7 @@ describe('Task API endpoint', () => {
 
             chai.request(api)
                 .post('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .send(task)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -117,6 +148,7 @@ describe('Task API endpoint', () => {
 
             chai.request(api)
                 .post('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .send(task)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -140,6 +172,7 @@ describe('Task API endpoint', () => {
 
             chai.request(api)
                 .post('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .send(task)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -163,6 +196,7 @@ describe('Task API endpoint', () => {
 
             chai.request(api)
                 .post('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .send(task)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -187,6 +221,7 @@ describe('Task API endpoint', () => {
 
             chai.request(api)
                 .post('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .send(task)
                 .end((err, res) => {
                     res.should.have.status(409);
@@ -215,6 +250,7 @@ describe('Task API endpoint', () => {
             card.save().then(savedCard => {
                 chai.request(api)
                 .post('/api/tasks')
+                .set('Authorization', 'Bearer ' + token)
                 .send(task)
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -247,6 +283,7 @@ describe('Task API endpoint', () => {
             task.save().then(savedTask => {
                 chai.request(api)
                     .get('/api/tasks/' + savedTask._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
@@ -274,6 +311,7 @@ describe('Task API endpoint', () => {
             task.save().then(savedTask => {
                 chai.request(api)
                     .get('/api/tasks/' + savedTask._id + '1')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.should.have.property('body').eql(null);
@@ -303,6 +341,7 @@ describe('Task API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/tasks/' + savedTask._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(taskWithMissingId)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -336,6 +375,7 @@ describe('Task API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/tasks/' + savedTask._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(taskWithMissingName)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -369,6 +409,7 @@ describe('Task API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/tasks/' + savedTask._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(taskWithMissingDesc)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -402,6 +443,7 @@ describe('Task API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/tasks/' + savedTask._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(taskWithMissingLabel)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -435,6 +477,7 @@ describe('Task API endpoint', () => {
 
                 chai.request(api)
                     .put('/api/tasks/' + savedTask._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(taskWithMissingCardId)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -480,6 +523,7 @@ describe('Task API endpoint', () => {
 
                     chai.request(api)
                         .put('/api/tasks/' + savedTask._id)
+                        .set('Authorization', 'Bearer ' + token)
                         .send(taskWithFullInfo)
                         .end((err,res) => {
                             res.should.have.status(200);
@@ -527,6 +571,7 @@ describe('Task API endpoint', () => {
                     }
                     chai.request(api)
                         .put('/api/tasks/' + savedTask._id)
+                        .set('Authorization', 'Bearer ' + token)
                         .send(taskWithFullInfo)
                         .end((err, res) => {
                             res.should.have.status(409);
@@ -566,6 +611,7 @@ describe('Task API endpoint', () => {
                     }
                     chai.request(api)
                         .put('/api/tasks/' + savedTask._id)
+                        .set('Authorization', 'Bearer ' + token)
                         .send(taskWithFullInfo)
                         .end((err, res) => {
                             res.should.have.status(409);
@@ -615,6 +661,7 @@ describe('Task API endpoint', () => {
                         }
                         chai.request(api)
                             .put('/api/tasks/' + savedTask._id)
+                            .set('Authorization', 'Bearer ' + token)
                             .send(taskWithFullInfo)
                             .end((err, res) => {
                                 res.should.have.status(200);
@@ -658,6 +705,7 @@ describe('Task API endpoint', () => {
                 task.save().then(savedTask => {
                     chai.request(api)
                         .del('/api/tasks/' + savedTask._id)
+                        .set('Authorization', 'Bearer ' + token)
                         .end((err, res) => {
                             res.should.have.status(204);
                             res.should.have.property('body').which.is.empty;
@@ -688,6 +736,7 @@ describe('Task API endpoint', () => {
                 task.save().then(savedTask => {
                     chai.request(api)
                         .del('/api/tasks/' + savedTask._id + '1')
+                        .set('Authorization', 'Bearer ' + token)
                         .end((err, res) => {
                             res.should.have.status(409);
                             res.body.should.be.an('object');
@@ -711,6 +760,7 @@ describe('Task API endpoint', () => {
             task.save().then(savedTask => {
                 chai.request(api)
                     .del('/api/tasks/' + savedTask._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');

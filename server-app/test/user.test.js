@@ -9,6 +9,32 @@ const should = chai.should();
 chai.use(chaiHttp);
 
 describe('User API endpoint', () => {
+    let token = "";
+    //create the token, so that tests can pass auth control
+    before((done) => {
+        User.remove({}, (err) => { 
+            const user = new User({
+                _id: 'userId',
+                userName: 'example',
+                password: 'example123',
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com'
+            });
+            user.password = user.generateHash(user.password);
+    
+            user.save().then(savedUser => {
+                chai.request(api)
+                .post('/api/login')
+                .send({userName: 'example', password: 'example123'})
+                .end((err,res) => {
+                    token = res.body.token;
+                    done();
+                });
+            });   
+        }); 
+    });
+
     beforeEach((done) => { 
         User.remove({}, (err) => { 
            done();         
@@ -19,6 +45,7 @@ describe('User API endpoint', () => {
         it('should GET 0 users when collection is empty', done => {
             chai.request(api)
             .get('/api/users')
+            .set('Authorization', 'Bearer ' + token)
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.an('array');
@@ -43,6 +70,7 @@ describe('User API endpoint', () => {
             User.create(users, (err, savedUsers) => {
                 chai.request(api)
                 .get('/api/users')
+                .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.an('array');
@@ -278,6 +306,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {
                 chai.request(api)
                     .get('/api/users/' + savedUser._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
@@ -310,6 +339,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {
                 chai.request(api)
                     .get('/api/users/' + savedUser._id + '1')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.should.have.property('body').eql(null);
@@ -339,6 +369,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithMissingId)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -372,6 +403,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithMissingFirstName)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -405,6 +437,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithMissingLastName)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -438,6 +471,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithMissingEmail)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -474,6 +508,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithFullInfo)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -518,6 +553,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id + '?password=true')
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithFullInfo)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -552,6 +588,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id + '?password=true')
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithFullInfo)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -586,6 +623,7 @@ describe('User API endpoint', () => {
     
                 chai.request(api)
                     .put('/api/users/' + savedUser._id + '?password=true')
+                    .set('Authorization', 'Bearer ' + token)
                     .send(userWithFullInfo)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -611,6 +649,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {    
                 chai.request(api)
                     .del('/api/users/' + savedUser._id)
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(204);
                         res.should.have.property('body').which.is.empty;
@@ -632,6 +671,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {    
                 chai.request(api)
                     .del('/api/users/' + savedUser._id + '1')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
@@ -656,6 +696,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {    
                 chai.request(api)
                     .get('/api/users/' + savedUser._id + '/projects')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
@@ -678,6 +719,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {    
                 chai.request(api)
                     .get('/api/users/' + savedUser._id + '1' + '/projects')
+                    .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
@@ -703,6 +745,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {
                 chai.request(api)
                     .put('/api/users/' + savedUser._id + '/projects')
+                    .set('Authorization', 'Bearer ' + token)
                     .send({projects: 'project1,project2'})
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -728,6 +771,7 @@ describe('User API endpoint', () => {
             user.save().then(savedUser => {  
                 chai.request(api)
                     .put('/api/users/' + savedUser._id + '1' + '/projects')
+                    .set('Authorization', 'Bearer ' + token)
                     .send({projects: 'projects,project2'})
                     .end((err, res) => {
                         res.should.have.status(409);
