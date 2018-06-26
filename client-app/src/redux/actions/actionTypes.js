@@ -20,7 +20,12 @@ export const UPDATE_TASK = 'UPDATE_TASK';
 export const REMOVE_TASK = 'REMOVE_TASK';
 export const MOVE_TASK = 'MOVE_TASK';
 
-//Network (async) actions
 //UI actions
 export const ACTIVATE_MODAL = 'ACTIVATE_MODAL';
 export const DEACTIVATE_MODAL = 'DEACTIVATE_MODAL';
+
+//Authentication actions
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const LOGOUT = 'LOGOUT';

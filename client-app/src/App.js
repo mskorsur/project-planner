@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
+import ProtectedRoute from './containers/ProtectedRoute';
 import Navbar from './components/Navbar';
 import ProjectPage from './containers/ProjectPage';
 import HomePage from './containers/HomePage';
@@ -15,8 +16,8 @@ class App extends React.Component {
           <Navbar />
           <Switch>
             <Route path="/" exact component={HomePage} />
-            <Route path="/project" component={ProjectPage} />
-            <Route path="/user" component={UserPage} />
+            <ProtectedRoute path="/project" component={ProjectPage} />
+            <ProtectedRoute path="/user" component={UserPage} />
             <Route path="/sign-in" component={SignInPage}/>
             <Route path="/log-in" component={LogInPage} />
             <Redirect to="/" />
