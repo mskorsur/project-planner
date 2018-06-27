@@ -1,4 +1,4 @@
-import { LOGIN_REQUEST } from '../actions/actionTypes';
+import { LOGIN_REQUEST, LOGOUT } from '../actions/actionTypes';
 import { loginSuccess, loginFailure } from '../actions/authActions';
 import { login } from '../../services/authService';
 
@@ -11,7 +11,7 @@ export const authActionsMiddleware = store => next => action => {
                 message: parsedResponse.message
             }
             
-            parsedResponse === 'Auth successful'
+            parsedResponse.message === 'Auth successful'
             ? store.dispatch(loginSuccess(data))
             : store.dispatch(loginFailure({message: data.message}))
         })

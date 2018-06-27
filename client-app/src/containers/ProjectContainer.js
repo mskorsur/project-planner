@@ -48,7 +48,7 @@ class ProjectContainer extends React.Component {
                     <div className="col-5">
                         <h2 className="heading-weight heading-color">{this.props.currentProject.name}</h2>
                     </div>
-                    <div className="col-3">
+                    <div className="col-3 ml-2">
                         <button type="button" className="btn btn-primary mx-1 my-1"><i className="far fa-save"></i> Save</button>
                         <button type="button" className="btn btn-primary mx-1 my-1" onClick={this.handleDeleteButtonClick}>
                             <i className="far fa-trash-alt"></i> Delete
