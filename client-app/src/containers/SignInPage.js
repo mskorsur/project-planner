@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addUser } from '../redux/actions/userActions';
+import { addUserRequest } from '../redux/actions/userActions';
 
 import UserInfoForm from '../components/UserInfoForm';
 
 const mapDispatchToProps = dispatch => {
     return {
-        addUser: (data) => {dispatch(addUser(data))}
+        addUser: (data) => {dispatch(addUserRequest(data))}
     }
 }
 

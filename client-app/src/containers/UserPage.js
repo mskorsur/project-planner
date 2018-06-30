@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { updateUser } from '../redux/actions/userActions';
+import { updateUserRequest } from '../redux/actions/userActions';
 
 import UserInfoForm from '../components/UserInfoForm';
 import ChangePasswordForm from '../components/ChangePasswordForm';
@@ -13,7 +13,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateUser: (id, data) => {dispatch(updateUser(id, data))}
+        updateUser: (id, data) => {dispatch(updateUserRequest(id, data))}
     }
 }
 
@@ -43,7 +43,7 @@ class UserPage extends React.Component {
         }
         
         if (this.state.isChangePass) {
-            return <ChangePasswordForm userId={this.props.currentUser.id}
+            return <ChangePasswordForm {...this.props.currentUser}
                                     update={this.props.updateUser}
                                     cancel={this.handleChangePasswordButtonClick}/>
         }

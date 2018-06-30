@@ -7,21 +7,10 @@ import { authReducer } from './authReducers';
 import { uiReducer } from './uiReducers';
 
 const initialState = {
-    currentUser: 'mskorsur',
+    currentUser: '',
     currentProject: '',
     users: {
-        byId: {
-            'mskorsur': {
-                id: 'mskorsur',
-                userName: 'mskorsur',
-                firstName: 'Marin',
-                lastName: 'Skorsur',
-                email: 'm.skorsur@gmail.com',
-                organization: 'FESB',
-                github: 'https://github.com/mskorsur',
-                projects: []
-            }
-        },
+        byId: {},
         allIds: []
     },
     projects: {

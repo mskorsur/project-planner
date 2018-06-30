@@ -1,5 +1,7 @@
 //User actions
+export const ADD_USER_REQUEST = 'ADD_USER_REQUEST';
 export const ADD_USER = 'ADD_USER';
+export const UPDATE_USER_REQUEST = 'UPDATE_USER_REQUEST';
 export const UPDATE_USER = 'UPDATE_USER';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 

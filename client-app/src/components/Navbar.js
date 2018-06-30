@@ -9,11 +9,23 @@ import ModalContainer from '../containers/ModalContainer';
 const mapStateToProps = state => {
     return {
         currentProject: state.currentProject,
-        currentUser: {
+        currentUser: selectCurrentUser(state),
+        isAuthenticated: state.auth.isAuthenticated
+    }
+}
+
+const selectCurrentUser = state => {
+    if (state.auth.isAuthenticated) {
+        return {
             id: state.currentUser,
             name: state.users.byId[state.currentUser].userName
-        },
-        isAuthenticated: state.auth.isAuthenticated
+        }
+    }
+    else {
+        return {
+            id: '',
+            name: ''
+        }
     }
 }
 

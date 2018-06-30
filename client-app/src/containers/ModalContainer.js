@@ -5,6 +5,8 @@ import { deactivateModal } from '../redux/actions/uiActions';
 import TaskModal from '../components/TaskModal';
 import NewProjectModal from '../components/NewProjectModal';
 import DeleteProjectModal from '../components/DeleteProjectModal';
+import DisplayErrorsModal from '../components/DisplayErrorsModal';
+import DisplaySuccessModal from '../components/DisplaySuccessModal';
 
 const mapStateToProps = state => {
     return {
@@ -44,6 +46,8 @@ class ModalContainer extends React.Component {
             case 'Task Modal': return this.renderTaskModal();
             case 'New Project Modal': return this.renderNewProjectModal();
             case 'Delete Project Modal': return this.renderDeleteProjectModal();
+            case 'Display Errors Modal': return this.renderDisplayErrorsModal();
+            case 'Display Success Modal': return this.renderDisplaySuccessModal();
             default: return;
         }
     }
@@ -57,7 +61,15 @@ class ModalContainer extends React.Component {
     }
 
     renderDeleteProjectModal = () => {
-        return <DeleteProjectModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>
+        return <DeleteProjectModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>;
+    }
+
+    renderDisplayErrorsModal = () => {
+        return <DisplayErrorsModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>;
+    }
+
+    renderDisplaySuccessModal = () => {
+        return <DisplaySuccessModal {...this.props.currentModal} toggle={this.props.deactivateModal}/>
     }
 
     render() {

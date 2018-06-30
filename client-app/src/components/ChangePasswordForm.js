@@ -31,7 +31,9 @@ class ChangePasswordForm extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
         
-        this.props.update(this.props.userId, this.state);
+        const {firstName, lastName, email} = this.props;
+        let data = Object.assign({}, this.state, {firstName, lastName, email});
+        this.props.update(this.props.id, data);
     }
 
     shouldPassBeInvalid = () => {

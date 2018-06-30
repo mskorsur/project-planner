@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const createToken = require('../auth/createToken');
+const mongoose = require('mongoose');
 
 exports.getUserList = async function(req, res, next) {
     try {
@@ -31,6 +32,7 @@ exports.loginUser = async function(req, res, next) {
         }
 
         const token = await createToken({
+            id: user._id,
             userName: user.userName,
             email: user.email,
             name: user.fullName
@@ -64,7 +66,7 @@ exports.createSingleUser = async function(req, res, next) {
     escapeAndTrimUserData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.status(409).json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occurred', error: errors});
         return;
     }
 
@@ -75,7 +77,7 @@ exports.createSingleUser = async function(req, res, next) {
     }
 
     const user = new User({
-        _id: req.body.id,
+        _id: new mongoose.Types.ObjectId(),
         userName: req.body.userName,
         email: req.body.email,
         firstName: req.body.firstName,
@@ -87,17 +89,31 @@ exports.createSingleUser = async function(req, res, next) {
     user.password = user.generateHash(req.body.password);
 
     try {
-        await user.save();
-
+        let savedUser = await user.save();
+        
         const token = await createToken({
+            id: user._id,
             userName: user.userName,
             email: user.email,
             name: user.fullName
         });
-        res.status(201).json({message: 'User created successfully', user_data: user, token: token});
+        res.status(201).json({message: 'User created successfully', user_data: mapUserForClient(savedUser), token: token});
     }
     catch (err) {
         return next(err);
+    }
+}
+
+function mapUserForClient(userData) {
+    return {
+        id: userData._id,
+        userName: userData.userName,
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        organization: userData.organization,
+        github: userData.github,
+        projects: userData.projects
     }
 }
 
@@ -108,7 +124,7 @@ exports.updateSingleUser = async function(req, res, next) {
     escapeAndTrimUserData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.status(409).json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occurred', error: errors});
         return;
     }
 
@@ -122,6 +138,7 @@ exports.updateSingleUser = async function(req, res, next) {
         const foundUser = await User.findById(userId)
                         .select({password: 0, __v: 0})
                         .exec();
+    
         foundUser._id = userId;
         foundUser.email = req.body.email;
         foundUser.firstName = req.body.firstName;
@@ -130,7 +147,7 @@ exports.updateSingleUser = async function(req, res, next) {
         foundUser.github = req.body.github;
 
         const updatedUser = await foundUser.save();
-        res.status(200).json({message: 'User updated successfully', user_data: updatedUser});
+        res.status(200).json({message: 'User updated successfully', user_data: mapUserForClient(updatedUser)});
     }
     catch(err) {
         return next(err);
@@ -220,7 +237,7 @@ exports.updateUserProjects = async function(req, res, next) {
 }
 
 function checkIfRequiredUserDataIsPresent(req, isCreate) {
-    req.checkBody('id', 'Missing Id').notEmpty();
+    //req.checkBody('id', 'Missing Id').notEmpty();
     if (isCreate) {
         req.checkBody('userName', 'Missing username').notEmpty();
         req.checkBody('password', 'Missing password').notEmpty();

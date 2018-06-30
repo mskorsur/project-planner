@@ -12,7 +12,6 @@ const initialState = {
 function addUserById(byIdState, action) {
     const { payload } = action;
     const newUser = {
-        id: action.id,
         ...payload,
         projects: []
     }
@@ -22,8 +21,8 @@ function addUserById(byIdState, action) {
 }
 
 function updateUserById(byIdState, action) {
-    const userId = action.id;
     const { payload } = action;
+    const userId = payload.id;
     const updatedUser = Object.assign({}, byIdState[userId], payload);
 
     return Object.assign({}, byIdState, {
@@ -61,7 +60,7 @@ function removeProjectFromUser(byIdState, action) {
 }
 
 function addUserAllIds(allIdsState, action) {
-    return [...allIdsState, action.id];
+    return [...allIdsState, action.payload.id];
 }
 
 //SLICE REDUCERS
