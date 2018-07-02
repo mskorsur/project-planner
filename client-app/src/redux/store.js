@@ -16,7 +16,7 @@ const middleware = applyMiddleware(
 );
 export const store = createStore(appReducer, persistedState, middleware);
 
-store.subscribe(throttle(() => {
+export const stateChangeUnsubscribe = store.subscribe(throttle(() => {
     saveState({
         currentUser: store.getState().currentUser,
         currentProject: store.getState().currentProject,
