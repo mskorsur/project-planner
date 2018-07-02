@@ -37,7 +37,7 @@ export function updateUserData(id, userData, token) {
             'Authorization': 'Bearer ' + token 
         },
         body: JSON.stringify(userData)
-    }
+    };
 
     return fetch(updateUserURL, requestOptions)
         .then(response => {
@@ -54,7 +54,7 @@ export function updateUserPassword(id, userData, token) {
             'Authorization': 'Bearer ' + token 
         },
         body: JSON.stringify(userData)
-    }
+    };
 
     return fetch(updateUserPasswordURL, requestOptions)
         .then(response => {
@@ -62,5 +62,34 @@ export function updateUserPassword(id, userData, token) {
         });
 }
 
-//get user projects
-//update user projects
+export function getUserProjects(id, token) {
+    const getUserProjectsURL = `http://${configuration.host}:${configuration.port}/api/users/${id}/projects`;
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    };
+
+    return fetch(getUserProjectsURL, requestOptions)
+        .then(response => {
+            return response.json();
+        });
+}
+
+export function updateUserProjects(id, userData, token) {
+    const updateUserProjectsURL = `http://${configuration.host}:${configuration.port}/api/users/${id}/projects`;
+    const requestOptions = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(userData)
+    };
+
+    return fetch(updateUserProjectsURL, requestOptions)
+        .then(response => {
+            return response.json();
+        });
+}

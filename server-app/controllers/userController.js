@@ -23,6 +23,7 @@ exports.loginUser = async function(req, res, next) {
     try {
         const user = await User.findOne({userName: userName})
                     .select({__v: 0})
+                    .populate({path: 'projects', select: '-__v'})
                     .exec();
         
         //if user does not exist or wrong password is provided return auth error
@@ -32,12 +33,11 @@ exports.loginUser = async function(req, res, next) {
         }
 
         const token = await createToken({
-            id: user._id,
             userName: user.userName,
             email: user.email,
             name: user.fullName
         });
-        res.status(200).json({message: 'Auth successful', token: token});
+        res.status(200).json({message: 'Auth successful', user_data: mapUserForClient(user), token: token});
         //also build and send redux state to user in this response
     }
     catch(err) {
@@ -54,7 +54,7 @@ exports.getSingleUser = async function(req, res, next) {
                     .populate({path: 'projects', select: '-__v'})
                     .exec();
         
-        res.status(200).json(user);
+        res.status(200).json(mapUserForClient(user));
     }
     catch(err) {
         return next(err);
@@ -92,7 +92,6 @@ exports.createSingleUser = async function(req, res, next) {
         let savedUser = await user.save();
         
         const token = await createToken({
-            id: user._id,
             userName: user.userName,
             email: user.email,
             name: user.fullName
@@ -105,6 +104,10 @@ exports.createSingleUser = async function(req, res, next) {
 }
 
 function mapUserForClient(userData) {
+    if (userData === null) {
+        return null;
+    }
+
     return {
         id: userData._id,
         userName: userData.userName,
