@@ -15,7 +15,7 @@ describe('Project API endpoint', () => {
     before((done) => {
         User.remove({}, (err) => { 
             const user = new User({
-                _id: 'userId',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example123',
                 firstName: 'John',
@@ -172,14 +172,15 @@ describe('Project API endpoint', () => {
         });
 
         it('should POST and create a project when required data is supplied and user exists', done => {
+            const userId = new mongoose.Types.ObjectId();
             const project = {
                 id: 'id',
                 name: 'example',
-                user: 'exampleID'
+                user: userId
             }
 
             const user = new User({
-                _id: 'exampleID',
+                _id: userId,
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -404,8 +405,9 @@ describe('Project API endpoint', () => {
 
     describe('DELETE /projects/:id', () => {
         it('should DELETE a project when ID is valid', done => {
+            const userId = new mongoose.Types.ObjectId();
             const user = new User({
-                _id: 'exampleID',
+                _id: userId,
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -417,7 +419,7 @@ describe('Project API endpoint', () => {
             const project = new Project({
                 _id: 'projectId',
                 name: 'example',
-                user: 'exampleID'
+                user: userId
             });
 
             user.save().then(savedUser => {
@@ -435,8 +437,9 @@ describe('Project API endpoint', () => {
         });
 
         it('should return error when ID is invalid', done => {
+            const userId = new mongoose.Types.ObjectId();
             const user = new User({
-                _id: 'exampleID',
+                _id: userId,
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -448,7 +451,7 @@ describe('Project API endpoint', () => {
             const project = new Project({
                 _id: 'id',
                 name: 'example',
-                user: 'exampleID'
+                user: userId
             });
 
             user.save().then(savedUser => {

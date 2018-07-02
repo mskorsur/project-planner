@@ -14,7 +14,7 @@ describe('User API endpoint', () => {
     before((done) => {
         User.remove({}, (err) => { 
             const user = new User({
-                _id: 'userId',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example123',
                 firstName: 'John',
@@ -58,7 +58,7 @@ describe('User API endpoint', () => {
             let users = [];
             for (let i = 0; i < 5; i++) {
                 const user = new User({
-                    _id: i.toString(),
+                    _id: new mongoose.Types.ObjectId(),
                     userName: 'example',
                     password: 'example',
                     firstName: 'John',
@@ -82,30 +82,6 @@ describe('User API endpoint', () => {
     });
 
     describe('POST /users', () => {
-        it('should not POST a user when ID is missing', done => {
-            const user = {
-                userName: 'example',
-                password: 'example',
-                firstName: 'John',
-                lastName: 'Doe',
-                email: 'john.doe@example.com'
-            }
-
-            chai.request(api)
-                .post('/api/users')
-                .send(user)
-                .end((err, res) => {
-                    res.should.have.status(409);
-                    res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
-                    res.body.should.have.property('error').which.is.an('array');
-                    res.body.error[0].should.be.an('object');
-                    res.body.error[0].should.have.property('location').eql('body');
-                    res.body.error[0].should.have.property('param').eql('id');
-                    done();
-                });
-        });
-
         it('should not POST a user when username is missing', done => {
             const user = {
                 id: 'id',
@@ -121,7 +97,7 @@ describe('User API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -145,7 +121,7 @@ describe('User API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -169,7 +145,7 @@ describe('User API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -193,7 +169,7 @@ describe('User API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -217,7 +193,7 @@ describe('User API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -228,7 +204,7 @@ describe('User API endpoint', () => {
 
         it('should not POST a user when username is taken', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -238,7 +214,6 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {
                 const userWithSameUsername = {
-                    id: 'id1',
                     userName: 'example',
                     password: 'example',
                     firstName: 'John',
@@ -260,7 +235,6 @@ describe('User API endpoint', () => {
 
         it('should POST and create a user when required data is supplied', done => {
             const user = {
-                id: 'id',
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -276,9 +250,8 @@ describe('User API endpoint', () => {
                     res.body.should.be.an('object');
                     res.body.should.have.property('message').eql('User created successfully');
                     res.body.should.have.property('user_data').which.is.an('object');
-                    res.body.user_data.should.have.property('_id');
+                    res.body.user_data.should.have.property('id');
                     res.body.user_data.should.have.property('userName');
-                    res.body.user_data.should.have.property('password');
                     res.body.user_data.should.have.property('email');
                     res.body.user_data.should.have.property('firstName');
                     res.body.user_data.should.have.property('lastName');
@@ -293,7 +266,7 @@ describe('User API endpoint', () => {
     describe('GET /users/:id', () => {
         it('should GET a user when ID is valid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -310,7 +283,7 @@ describe('User API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('_id').eql(savedUser._id);
+                        res.body.should.have.property('id').eql(savedUser._id.toString());
                         res.body.should.have.property('userName').eql(savedUser.userName);
                         res.body.should.not.have.property('password');
                         res.body.should.have.property('firstName').eql(savedUser.firstName);
@@ -326,7 +299,7 @@ describe('User API endpoint', () => {
 
         it('should return null when ID is invalid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -338,7 +311,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {
                 chai.request(api)
-                    .get('/api/users/' + savedUser._id + '1')
+                    .get('/api/users/' + new mongoose.Types.ObjectId())
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -350,43 +323,9 @@ describe('User API endpoint', () => {
     });
 
     describe('PUT /users/:id', () => {
-        it('should not PUT a user when ID is missing', done => {
-            const user = new User({
-                _id: 'id',
-                userName: 'example',
-                password: 'example',
-                firstName: 'John',
-                lastName: 'Doe',
-                email: 'john.doe@example.com'
-            });
-
-            user.save().then(savedUser => {
-                const userWithMissingId = {
-                    firstName: 'John',
-                    lastName: 'Doe',
-                    email: 'john.doe@example.com'
-                }
-    
-                chai.request(api)
-                    .put('/api/users/' + savedUser._id)
-                    .set('Authorization', 'Bearer ' + token)
-                    .send(userWithMissingId)
-                    .end((err, res) => {
-                        res.should.have.status(409);
-                        res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
-                        res.body.should.have.property('error').which.is.an('array');
-                        res.body.error[0].should.be.an('object');
-                        res.body.error[0].should.have.property('location').eql('body');
-                        res.body.error[0].should.have.property('param').eql('id');
-                        done();
-                    });
-            });
-        });
-
         it('should not PUT a user when firstName is missing', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -408,7 +347,7 @@ describe('User API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -420,7 +359,7 @@ describe('User API endpoint', () => {
 
         it('should not PUT a user when lastName is missing', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -442,7 +381,7 @@ describe('User API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -454,7 +393,7 @@ describe('User API endpoint', () => {
 
         it('should not PUT a user when email is missing', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -476,7 +415,7 @@ describe('User API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -487,8 +426,9 @@ describe('User API endpoint', () => {
         });
 
         it('should PUT and update a user when required data is supplied', done => {
+            const userId = new mongoose.Types.ObjectId();
             const user = new User({
-                _id: 'id',
+                _id: userId,
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -498,7 +438,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {
                 const userWithFullInfo = {
-                    id: 'id',
+                    id: userId,
                     firstName: 'John',
                     lastName: 'Johnny',
                     email: 'john.doe@gmail.com',
@@ -515,7 +455,7 @@ describe('User API endpoint', () => {
                         res.body.should.be.an('object');
                         res.body.should.have.property('message').eql('User updated successfully');
                         res.body.should.have.property('user_data').which.is.an('object');
-                        res.body.user_data.should.have.property('_id').eql(savedUser._id);
+                        res.body.user_data.should.have.property('id').eql(savedUser._id.toString());
                         res.body.user_data.should.have.property('userName').eql(savedUser.userName);
                         res.body.user_data.should.not.have.property('password');
                         res.body.user_data.should.have.property('email').eql(userWithFullInfo.email);
@@ -530,8 +470,9 @@ describe('User API endpoint', () => {
         });
 
         it('should update only password when flag is set and passwords are correct', done => {
+            const userId = new mongoose.Types.ObjectId();
             const user = new User({
-                _id: 'id',
+                _id: userId,
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -542,7 +483,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {
                 const userWithFullInfo = {
-                    id: 'id',
+                    id: userId,
                     firstName: 'John',
                     lastName: 'Doe',
                     email: 'john.doe@example.com',
@@ -565,8 +506,9 @@ describe('User API endpoint', () => {
         });
 
         it('should not update password when passwords do not match', done => {
+            const userId = new mongoose.Types.ObjectId();
             const user = new User({
-                _id: 'id',
+                _id: userId,
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -577,7 +519,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {
                 const userWithFullInfo = {
-                    id: 'id',
+                    id: userId,
                     firstName: 'John',
                     lastName: 'Doe',
                     email: 'john.doe@example.com',
@@ -600,8 +542,9 @@ describe('User API endpoint', () => {
         });
 
         it('should not update password when current password is wrong', done => {
+            const userId = new mongoose.Types.ObjectId();
             const user = new User({
-                _id: 'id',
+                _id: userId,
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -612,7 +555,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {
                 const userWithFullInfo = {
-                    id: 'id',
+                    id: userId,
                     firstName: 'John',
                     lastName: 'Doe',
                     email: 'john.doe@example.com',
@@ -638,7 +581,7 @@ describe('User API endpoint', () => {
     describe('DELETE /users/:id', () => {
         it('should DELETE a user when ID is valid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -660,7 +603,7 @@ describe('User API endpoint', () => {
 
         it('should return error when ID is invalid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -670,7 +613,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {    
                 chai.request(api)
-                    .del('/api/users/' + savedUser._id + '1')
+                    .del('/api/users/' + new mongoose.Types.ObjectId())
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -685,7 +628,7 @@ describe('User API endpoint', () => {
     describe('GET /users/:id/projects', () => {
         it('should GET an array of user projects when ID is valid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -708,7 +651,7 @@ describe('User API endpoint', () => {
 
         it('should return error when ID is invalid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -718,7 +661,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {    
                 chai.request(api)
-                    .get('/api/users/' + savedUser._id + '1' + '/projects')
+                    .get('/api/users/' + new mongoose.Types.ObjectId() + '/projects')
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -733,7 +676,7 @@ describe('User API endpoint', () => {
     describe('PUT /users/:id/projects', () => {
         it('should PUT and update user projects when ID is valid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -760,7 +703,7 @@ describe('User API endpoint', () => {
 
         it('should return error when ID is invalid', done => {
             const user = new User({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example',
                 firstName: 'John',
@@ -770,7 +713,7 @@ describe('User API endpoint', () => {
 
             user.save().then(savedUser => {  
                 chai.request(api)
-                    .put('/api/users/' + savedUser._id + '1' + '/projects')
+                    .put('/api/users/' + new mongoose.Types.ObjectId() + '/projects')
                     .set('Authorization', 'Bearer ' + token)
                     .send({projects: 'projects,project2'})
                     .end((err, res) => {

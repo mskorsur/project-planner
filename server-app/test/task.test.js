@@ -16,7 +16,7 @@ describe('Task API endpoint', () => {
     before((done) => {
         User.remove({}, (err) => { 
             const user = new User({
-                _id: 'userId',
+                _id: new mongoose.Types.ObjectId(),
                 userName: 'example',
                 password: 'example123',
                 firstName: 'John',
