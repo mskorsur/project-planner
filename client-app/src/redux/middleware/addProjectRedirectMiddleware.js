@@ -1,9 +1,9 @@
-import { ADD_PROJECT } from '../actions/actionTypes';
+import { PROJECT_REDIRECT } from '../actions/actionTypes';
 
 export const addProjectRedirectMiddleware = store => next => action => {
-    if (action.type === ADD_PROJECT) {
-        action.payload.history.push(`/project/${action.id}`);
-        delete action.payload.history;
+    if (action.type === PROJECT_REDIRECT) {
+        action.history.push(`/project/${action.id}`);
     }
-    next(action);
+
+   next(action);
 }

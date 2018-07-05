@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const createToken = require('../auth/createToken');
+const mapUser = require('../utils/mapUser');
+const mapProject = require('../utils/mapProject');
 const mongoose = require('mongoose');
 
 exports.getUserList = async function(req, res, next) {
@@ -21,7 +23,7 @@ exports.loginUser = async function(req, res, next) {
     const password = req.body.password;
 
     try {
-        const user = await User.findOne({userName: userName})
+        let user = await User.findOne({userName: userName})
                     .select({__v: 0})
                     .populate({path: 'projects', select: '-__v'})
                     .exec();
@@ -37,8 +39,13 @@ exports.loginUser = async function(req, res, next) {
             email: user.email,
             name: user.fullName
         });
-        res.status(200).json({message: 'Auth successful', user_data: mapUserForClient(user), token: token});
-        //also build and send redux state to user in this response
+        const userProjects = user.projects.map(project => mapProject(project));
+        
+        res.status(200).json({
+            message: 'Auth successful', 
+            initial_state: {user: mapUser(user), projects: userProjects}, 
+            token: token
+        });
     }
     catch(err) {
         return next(err);
@@ -54,7 +61,7 @@ exports.getSingleUser = async function(req, res, next) {
                     .populate({path: 'projects', select: '-__v'})
                     .exec();
         
-        res.status(200).json(mapUserForClient(user));
+        res.status(200).json(mapUser(user));
     }
     catch(err) {
         return next(err);
@@ -96,27 +103,10 @@ exports.createSingleUser = async function(req, res, next) {
             email: user.email,
             name: user.fullName
         });
-        res.status(201).json({message: 'User created successfully', user_data: mapUserForClient(savedUser), token: token});
+        res.status(201).json({message: 'User created successfully', user_data: mapUser(savedUser), token: token});
     }
     catch (err) {
         return next(err);
-    }
-}
-
-function mapUserForClient(userData) {
-    if (userData === null) {
-        return null;
-    }
-
-    return {
-        id: userData._id,
-        userName: userData.userName,
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        organization: userData.organization,
-        github: userData.github,
-        projects: userData.projects
     }
 }
 
@@ -150,7 +140,7 @@ exports.updateSingleUser = async function(req, res, next) {
         foundUser.github = req.body.github;
 
         const updatedUser = await foundUser.save();
-        res.status(200).json({message: 'User updated successfully', user_data: mapUserForClient(updatedUser)});
+        res.status(200).json({message: 'User updated successfully', user_data: mapUser(updatedUser)});
     }
     catch(err) {
         return next(err);

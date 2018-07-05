@@ -32,7 +32,7 @@ function updateUserById(byIdState, action) {
 
 function addProjectToUser(byIdState, action) {
     const userId = action.payload.user;
-    const projectId = action.id;
+    const projectId = action.payload.id;
 
     const userProjectsWithNewProject = [...byIdState[userId].projects, projectId];
     const updatedUser = Object.assign({}, byIdState[userId], {

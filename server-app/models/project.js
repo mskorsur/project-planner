@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const projectSchema = new Schema({
-    _id: { type: String, required: true },
+    _id: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true, maxlength: 40 },
     status: { type: String, enum: ['Active', 'Paused', 'Done'] },
     lastModified: { type: Date },
-    user: { type: String, ref: 'User', required: true },
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     cards: [{ type: String, ref: 'Card' }]
 });
 

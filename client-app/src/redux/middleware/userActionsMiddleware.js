@@ -1,9 +1,9 @@
 import { ADD_USER_REQUEST, UPDATE_USER_REQUEST } from '../actions/actionTypes';
 import { addUser, updateUser } from '../actions/userActions';
 import { loginSuccess } from '../actions/authActions';
-import { activateModal } from '../actions/uiActions';
 import { setCurrentUser } from '../actions/currentSelectionActions';
 import { createUser, updateUserData, updateUserPassword } from '../../services/userService';
+import { activateErrorModal, activateSuccessModal } from '../../utils/NotificationModalsManager';
 
 export const userActionsMiddleware = store => next => action => {
     if (action.type === ADD_USER_REQUEST) {
@@ -42,6 +42,7 @@ function handleAddUserRequest(store, action) {
 
 function handleUpdateUserRequest(store, action) {
     const token = store.getState().auth.token;
+    
     if (action.payload.hasOwnProperty('currentPassword')) {
         updateUserPassword(action.id, action.payload, token)
         .then(parsedResponse => {
@@ -79,22 +80,4 @@ function handleUpdateUserRequest(store, action) {
             activateErrorModal(store, message);
         });
     }
-}
-
-function activateErrorModal(store, message) {
-    const errorModal = {
-        modalType: 'Display Errors Modal',
-        modalData: message,
-        submit: []
-    };
-    store.dispatch(activateModal(errorModal));
-}
-
-function activateSuccessModal(store, message) {
-    const successModal = {
-        modalType: 'Display Success Modal',
-        modalData: message,
-        submit: []
-    };
-    store.dispatch(activateModal(successModal));
 }

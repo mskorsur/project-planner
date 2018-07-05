@@ -1,5 +1,7 @@
 const Project = require('../models/project');
 const User = require('../models/user');
+const mapProject = require('../utils/mapProject');
+const mongoose = require('mongoose');
 
 exports.getProjectList = async function(req, res, next) {
     try {
@@ -24,7 +26,7 @@ exports.getSingleProject = async function(req, res, next) {
                         .populate({path: 'cards', select: '-__v'})
                         .exec();
         
-        res.status(200).json(project);
+        res.status(200).json(mapProject(project));
     }
     catch(err) {
         return next(err);
@@ -36,12 +38,12 @@ exports.createSingleProject = async function(req, res, next) {
     escapeAndTrimProjectData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.status(409).json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occurred', error: errors});
         return;
     }
 
     const project = new Project({
-        _id: req.body.id,
+        _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         status: req.body.status || 'Active',
         lastModified: req.body.lastModified || Date.now(),
@@ -53,7 +55,7 @@ exports.createSingleProject = async function(req, res, next) {
         const userUpdateMsg = await addProjectToContainingUser(project.user, project._id);
         if (userUpdateMsg === 'User update successful during project create') {
             await project.save();
-            res.status(201).json({message: 'Project created successfully', project_data: project});
+            res.status(201).json({message: 'Project created successfully', project_data: mapProject(project)});
         }
         else {
             res.status(409).json({message: 'Project not created, user update fail'});
@@ -86,7 +88,7 @@ exports.updateSingleProject = async function(req, res, next) {
     escapeAndTrimProjectData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.status(409).json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occurred', error: errors});
         return;
     }
 
@@ -95,14 +97,14 @@ exports.updateSingleProject = async function(req, res, next) {
                             .select({__v: 0})
                             .exec();
         
-        foundProject._id = req.body.id;
+        foundProject._id = projectId;
         foundProject.name = req.body.name;
         foundProject.status = req.body.status;
         foundProject.lastModified = req.body.lastModified;
         foundProject.user = req.body.user;
 
         const updatedProject = await foundProject.save();
-        res.status(200).json({message: 'Project updated successfully', project_data: updatedProject});
+        res.status(200).json({message: 'Project updated successfully', project_data: mapProject(updatedProject)});
     }
     catch(err) {
         return next(err);
@@ -196,7 +198,7 @@ async function removeProjectFromContainingUser(userId, projectId) {
 }
 
 function checkIfRequiredProjectDataIsPresent(req) {
-    req.checkBody('id', 'Missing Id').notEmpty();
+    //req.checkBody('id', 'Missing Id').notEmpty();
     req.checkBody('name', 'Missing name').notEmpty();
     req.checkBody('user', 'Missing user Id').notEmpty();
 }

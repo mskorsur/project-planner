@@ -11,7 +11,7 @@ const userSchema = new Schema({
     lastName: { type: String,  required: true, maxlength: 40},
     organization: { type: String, maxlength: 40 },
     github: { type: String },
-    projects: [{ type: String, ref: 'Project' }]
+    projects: [{ type: Schema.Types.ObjectId, ref: 'Project' }]
 });
 
 
