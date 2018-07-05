@@ -684,18 +684,18 @@ describe('User API endpoint', () => {
                 email: 'john.doe@example.com',
                 projects: []
             });
-
+            const updatedProjects = [new mongoose.Types.ObjectId().toString(),new mongoose.Types.ObjectId().toString()];
             user.save().then(savedUser => {
                 chai.request(api)
                     .put('/api/users/' + savedUser._id + '/projects')
                     .set('Authorization', 'Bearer ' + token)
-                    .send({projects: 'project1,project2'})
+                    .send({projects: updatedProjects.join(',')})
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
                         res.body.should.have.property('message').eql('User updated successfully');
                         res.body.should.have.property('user_data').which.is.an('array');
-                        res.body.user_data.should.be.eql(['project1', 'project2']);
+                        res.body.user_data.should.be.eql(updatedProjects);
                         done();
                     });
             });

@@ -174,16 +174,17 @@ describe('Card API endpoint', () => {
         });
 
         it('should POST and create a card when required data is supplied and project exists', done => {
+            const projectId = new mongoose.Types.ObjectId();
             const card = {
                 id: 'id',
                 name: 'example',
-                project: 'projectID'
+                project: projectId
             }
 
             const project = new Project({
-                _id: 'projectID',
+                _id: projectId,
                 name: 'example',
-                user: 'exampleID',
+                user: new mongoose.Types.ObjectId(),
                 cards: []
             });
 
@@ -351,7 +352,7 @@ describe('Card API endpoint', () => {
             const card = new Card({
                 _id: 'id',
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
@@ -383,17 +384,18 @@ describe('Card API endpoint', () => {
 
     describe('DELETE /cards/:id', () => {
         it('should DELETE a card when ID is valid', done => {
+            const projectId = new mongoose.Types.ObjectId();
             const card = new Card({
                 _id: 'card1',
                 name: 'example',
-                project: 'projectId',
+                project: projectId,
                 tasks: []
             });
 
             const project = new Project({
-                _id: 'projectId',
+                _id: projectId,
                 name: 'Example',
-                user: 'userId',
+                user: new mongoose.Types.ObjectId(),
                 cards: ['card1']
             });
 
@@ -412,17 +414,18 @@ describe('Card API endpoint', () => {
         });
 
         it('should return error when ID is invalid', done => {
+            const projectId = new mongoose.Types.ObjectId();
             const card = new Card({
                 _id: 'card1',
                 name: 'example',
-                project: 'projectId',
+                project: projectId,
                 tasks: []
             });
 
             const project = new Project({
-                _id: 'projectId',
+                _id: projectId,
                 name: 'Example',
-                user: 'userId',
+                user: new mongoose.Types.ObjectId(),
                 cards: ['card1']
             });
 
@@ -445,7 +448,7 @@ describe('Card API endpoint', () => {
             const card = new Card({
                 _id: 'card1',
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
