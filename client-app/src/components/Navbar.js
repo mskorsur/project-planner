@@ -2,7 +2,7 @@ import React, {Fragment} from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { activateModal } from '../redux/actions/uiActions';
-import { addProject } from '../redux/actions/projectActions';
+import { addProjectRequest } from '../redux/actions/projectActions';
 import { logout } from '../redux/actions/authActions';
 
 import ModalContainer from '../containers/ModalContainer';
@@ -32,7 +32,7 @@ const selectCurrentUser = state => {
 const mapDispatchToProps = dispatch => {
     return {
         activateModal: (data) => {dispatch(activateModal(data))},
-        addProject: (data) => {dispatch(addProject(data))},
+        addProject: (data) => {dispatch(addProjectRequest(data))},
         logout: () => {dispatch(logout())}
     }
 }

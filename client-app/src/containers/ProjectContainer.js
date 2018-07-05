@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { setCurrentProject } from '../redux/actions/currentSelectionActions';
-import { removeProject } from '../redux/actions/projectActions';
+import { updateProjectRequest, removeProjectRequest } from '../redux/actions/projectActions';
 import { activateModal } from '../redux/actions/uiActions';
 
 import CardContainer from './CardContainer';
+import ProjectStatusSelect from '../components/ProjectStatusSelect';
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -15,8 +16,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setCurrentProject: (project) => {dispatch(setCurrentProject(project))},
-        removeProject: (projectId, userId) => {dispatch(removeProject(projectId, userId))},
+        setCurrentProject: (projectId) => {dispatch(setCurrentProject(projectId))},
+        updateProject: (projectId, data) => {dispatch(updateProjectRequest(projectId, data))},
+        removeProject: (projectId, userId) => {dispatch(removeProjectRequest(projectId, userId))},
         activateModal: (data) => {dispatch(activateModal(data))}
     }
 }
@@ -41,6 +43,14 @@ class ProjectContainer extends React.Component {
         this.props.history.push('/project/all');
     }
 
+    handleStatusUpdate = (status) => {
+        const projectData = Object.assign({}, this.props.currentProject, 
+            {status, lastModified: Date.now().toString()}
+        );
+        delete projectData.cards;
+        this.props.updateProject(projectData.id, projectData);
+    }
+
     render() {
         return (
             <Fragment>
@@ -48,7 +58,9 @@ class ProjectContainer extends React.Component {
                     <div className="col-5">
                         <h2 className="heading-weight heading-color">{this.props.currentProject.name}</h2>
                     </div>
-                    <div className="col-3 ml-2">
+                    <div className="col-4 ml-2">
+                        <ProjectStatusSelect currentStatus={this.props.currentProject.status}
+                                            changeStatus={this.handleStatusUpdate}/>
                         <button type="button" className="btn btn-primary mx-1 my-1"><i className="far fa-save"></i> Save</button>
                         <button type="button" className="btn btn-primary mx-1 my-1" onClick={this.handleDeleteButtonClick}>
                             <i className="far fa-trash-alt"></i> Delete

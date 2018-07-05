@@ -211,6 +211,11 @@ body {
   border-top-right-radius: 0;
 }
 
+.status-select {
+  width: auto !important;
+  display: inline-block !important;
+}
+
 /* Custom scrollbar */
 /* width */
 ::-webkit-scrollbar {

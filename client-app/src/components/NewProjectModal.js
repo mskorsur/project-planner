@@ -19,7 +19,7 @@ class NewProjectModal extends React.Component {
 
         const newProject = {
             name: this.state.name,
-            status: 'active',
+            status: 'Active',
             user: this.props.modalData.userId
         }
         console.log(this.props.modalData);
