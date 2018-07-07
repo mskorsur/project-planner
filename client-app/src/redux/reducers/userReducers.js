@@ -12,8 +12,7 @@ const initialState = {
 function addUserById(byIdState, action) {
     const { payload } = action;
     const newUser = {
-        ...payload,
-        projects: []
+        ...payload
     }
     return Object.assign({}, byIdState, {
         [newUser.id]: newUser
@@ -33,6 +32,10 @@ function updateUserById(byIdState, action) {
 function addProjectToUser(byIdState, action) {
     const userId = action.payload.user;
     const projectId = action.payload.id;
+
+    if (byIdState[userId].projects.includes(projectId)) {
+        return byIdState;
+    }
 
     const userProjectsWithNewProject = [...byIdState[userId].projects, projectId];
     const updatedUser = Object.assign({}, byIdState[userId], {

@@ -7,7 +7,7 @@ const projectSchema = new Schema({
     status: { type: String, enum: ['Active', 'Paused', 'Done'] },
     lastModified: { type: Date },
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    cards: [{ type: String, ref: 'Card' }]
+    cards: [{ type: Schema.Types.ObjectId, ref: 'Card' }]
 });
 
 projectSchema

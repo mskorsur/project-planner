@@ -4,6 +4,7 @@ import { loggerMiddleware } from './middleware/loggerMiddleware';
 import { authActionsMiddleware } from './middleware/authActionsMiddleware';
 import { userActionsMiddleware } from './middleware/userActionsMiddleware';
 import { projectActionsMiddleware } from './middleware/projectActionsMiddleware';
+import { cardActionsMiddleware } from './middleware/cardActionsMiddleware';
 import { addProjectRedirectMiddleware } from './middleware/addProjectRedirectMiddleware';
 import { loadState, saveState } from '../utils/LocalStorageManager';
 import throttle from '../../node_modules/lodash/throttle';
@@ -14,6 +15,7 @@ const middleware = applyMiddleware(
     authActionsMiddleware, 
     userActionsMiddleware,
     projectActionsMiddleware,
+    cardActionsMiddleware,
     addProjectRedirectMiddleware
 );
 export const store = createStore(appReducer, persistedState, middleware);

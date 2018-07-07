@@ -78,7 +78,7 @@ export function getProjectCards(id, token) {
 
     return fetch(getProjectCardsURL, requestOptions)
         .then(response => {
-            response.json();
+            return response.json();
         });
 }
 
@@ -95,6 +95,6 @@ export function updateProjectCards(id, projectData, token) {
 
     return fetch(updateProjectCardsURL, requestOptions)
         .then(response => {
-            response.json();
+            return response.json();
         });
 }

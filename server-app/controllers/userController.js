@@ -39,11 +39,12 @@ exports.loginUser = async function(req, res, next) {
             email: user.email,
             name: user.fullName
         });
-        const userProjects = user.projects.map(project => mapProject(project));
+        const projects = user.projects.map(project => mapProject(project));
+        user.projects = user.projects.map(project => project._id);
         
         res.status(200).json({
             message: 'Auth successful', 
-            initial_state: {user: mapUser(user), projects: userProjects}, 
+            initial_state: {user: mapUser(user), projects: projects}, 
             token: token
         });
     }

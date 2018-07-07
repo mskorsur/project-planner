@@ -184,7 +184,7 @@ body {
   width: 100%;
   max-width: 330px;
   padding: 15px;
-  margin: auto
+  margin: auto;
 }
 
 .form-log-in .form-control {
@@ -214,6 +214,13 @@ body {
 .status-select {
   width: auto !important;
   display: inline-block !important;
+}
+
+.spinner {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
 }
 
 /* Custom scrollbar */

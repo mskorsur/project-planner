@@ -1,6 +1,7 @@
 const Project = require('../models/project');
 const User = require('../models/user');
 const mapProject = require('../utils/mapProject');
+const mapCard = require('../utils/mapCard');
 const mongoose = require('mongoose');
 
 exports.getProjectList = async function(req, res, next) {
@@ -148,7 +149,8 @@ exports.getProjectCards = async function(req, res, next) {
                         .exec();
 
         if (project !== null) {
-            res.status(200).json({cards: project.cards});
+            const mappedCards = project.cards.map(card => mapCard(card));
+            res.status(200).json({cards: mappedCards});
         }
         else {
             res.status(409).json({message: 'Project not found'});

@@ -54,7 +54,7 @@ function handleUpdateProjectRequest(store, action) {
             activateErrorModal(store, message);
         }
         else {
-            store.dispatch(updateProject(parsedResponse.project_data.id, parsedResponse.project_data))
+            store.dispatch(updateProject(parsedResponse.project_data.id, parsedResponse.project_data));
         }
     })
     .catch(err => {

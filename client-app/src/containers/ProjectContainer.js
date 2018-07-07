@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { setCurrentProject } from '../redux/actions/currentSelectionActions';
 import { updateProjectRequest, removeProjectRequest } from '../redux/actions/projectActions';
+import { fetchProjectCards } from '../redux/actions/cardActions';
 import { activateModal } from '../redux/actions/uiActions';
 
 import CardContainer from './CardContainer';
@@ -17,6 +18,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         setCurrentProject: (projectId) => {dispatch(setCurrentProject(projectId))},
+        fetchCards: (projectId) => {dispatch(fetchProjectCards(projectId))},
         updateProject: (projectId, data) => {dispatch(updateProjectRequest(projectId, data))},
         removeProject: (projectId, userId) => {dispatch(removeProjectRequest(projectId, userId))},
         activateModal: (data) => {dispatch(activateModal(data))}
@@ -24,6 +26,10 @@ const mapDispatchToProps = dispatch => {
 }
 
 class ProjectContainer extends React.Component {
+    componentWillMount() {
+        this.props.fetchCards(this.props.match.params.projectId);
+    }
+    
     componentDidMount() {
         this.props.setCurrentProject(this.props.match.params.projectId);
     }

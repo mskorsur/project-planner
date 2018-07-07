@@ -14,8 +14,7 @@ const initialState = {
 function addProjectById(byIdState, action) {
     const { payload } = action;
     const newProject = {
-        ...payload,
-        cards: []
+        ...payload
     }
     return Object.assign({}, byIdState, {
         [newProject.id]: newProject
@@ -42,7 +41,11 @@ function removeProjectById(byIdState, action) {
 
 function addCardToProject(byIdState, action) {
     const projectId = action.payload.project;
-    const cardId = action.id;
+    const cardId = action.payload.id;
+
+    if (byIdState[projectId].cards.includes(cardId)) {
+        return byIdState;
+    }
 
     const projectCardsWithNewCard = [...byIdState[projectId].cards, cardId];
     const updatedProject = Object.assign({}, byIdState[projectId], {
@@ -70,6 +73,10 @@ function removeCardFromProject(byIdState, action) {
 }
 
 function addProjectAllIds(allIdsState, action) {
+    if (allIdsState.includes(action.payload.id)) {
+        return allIdsState;
+    }
+
     return [...allIdsState, action.payload.id];
 }
 

@@ -18,6 +18,7 @@ const initialState = {
         allIds: []
     },
     cards: {
+        isFetching: false,
         byId: {},
         allIds: []
     },
