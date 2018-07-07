@@ -66,9 +66,9 @@ describe('Card API endpoint', () => {
             let cards = [];
             for (let i = 0; i < 3; i++) {
                 const card = new Card({
-                    _id: i.toString(),
+                    _id: new mongoose.Types.ObjectId(),
                     name: 'example',
-                    project: 'exampleID' + i
+                    project: new mongoose.Types.ObjectId()
                 });
                 cards.push(card);
             }
@@ -88,32 +88,10 @@ describe('Card API endpoint', () => {
     });
 
     describe('POST /cards', () => {
-        it('should not POST a card when ID is missing', done => {
-            const card = {
-                name: 'example',
-                project: 'exampleID'
-            }
-
-            chai.request(api)
-                .post('/api/cards')
-                .set('Authorization', 'Bearer ' + token)
-                .send(card)
-                .end((err, res) => {
-                    res.should.have.status(409);
-                    res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
-                    res.body.should.have.property('error').which.is.an('array');
-                    res.body.error[0].should.be.an('object');
-                    res.body.error[0].should.have.property('location').eql('body');
-                    res.body.error[0].should.have.property('param').eql('id');
-                    done();
-                });
-        });
-
         it('should not POST a card when name is missing', done => {
             const card = {
-                id: 'id',
-                project: 'exampleID'
+                id: new mongoose.Types.ObjectId(),
+                project: new mongoose.Types.ObjectId()
             }
 
             chai.request(api)
@@ -123,7 +101,7 @@ describe('Card API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -134,7 +112,7 @@ describe('Card API endpoint', () => {
 
         it('should not POST a card when projectID is missing', done => {
             const card = {
-                id: 'id',
+                id: new mongoose.Types.ObjectId(),
                 name: 'example'
             }
 
@@ -145,7 +123,7 @@ describe('Card API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -158,7 +136,7 @@ describe('Card API endpoint', () => {
             const card = {
                 id: 'id',
                 name: 'example',
-                project: 'exampleID'
+                project: new mongoose.Types.ObjectId()
             }
 
             chai.request(api)
@@ -176,7 +154,7 @@ describe('Card API endpoint', () => {
         it('should POST and create a card when required data is supplied and project exists', done => {
             const projectId = new mongoose.Types.ObjectId();
             const card = {
-                id: 'id',
+                id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 project: projectId
             }
@@ -198,7 +176,7 @@ describe('Card API endpoint', () => {
                     res.body.should.be.an('object');
                     res.body.should.have.property('message').eql('Card created successfully');
                     res.body.should.have.property('card_data').which.is.an('object');
-                    res.body.card_data.should.have.property('_id');
+                    res.body.card_data.should.have.property('id');
                     res.body.card_data.should.have.property('name');
                     res.body.card_data.should.have.property('project');
                     res.body.card_data.should.have.property('tasks').which.is.an('array');
@@ -211,9 +189,9 @@ describe('Card API endpoint', () => {
     describe('GET /cards/:id', () => {
         it('should GET a card when ID is valid', done => {
             const card = new Card({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
@@ -224,9 +202,9 @@ describe('Card API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('_id').eql(savedCard._id);
+                        res.body.should.have.property('id').eql(savedCard._id.toString());
                         res.body.should.have.property('name').eql(savedCard.name);
-                        res.body.should.have.property('project').eql(savedCard.project);
+                        res.body.should.have.property('project').eql(savedCard.project.toString());
                         res.body.should.have.property('tasks').which.is.an('array');
                         done();
                     });
@@ -235,15 +213,15 @@ describe('Card API endpoint', () => {
 
         it('should return null when ID is invalid', done => {
             const card = new Card({
-                _id: 'id',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
             card.save().then(savedCard => {
                 chai.request(api)
-                    .get('/api/cards/' + savedCard._id + '1')
+                    .get('/api/cards/' + new mongoose.Types.ObjectId())
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -255,49 +233,20 @@ describe('Card API endpoint', () => {
     });
 
     describe('PUT /cards/:id', () => {
-        it('should not PUT a card when ID is missing', done => {
-            const card = new Card({
-                _id: 'id',
-                name: 'example',
-                project: 'projectId',
-                tasks: []
-            });
-
-            card.save().then(savedCard => {
-                const cardWithMissingId = {
-                    name: 'example',
-                    project: 'projectId'
-                }
-
-                chai.request(api)
-                    .put('/api/cards/' + savedCard._id)
-                    .set('Authorization', 'Bearer ' + token)
-                    .send(cardWithMissingId)
-                    .end((err, res) => {
-                        res.should.have.status(409);
-                        res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
-                        res.body.should.have.property('error').which.is.an('array');
-                        res.body.error[0].should.be.an('object');
-                        res.body.error[0].should.have.property('location').eql('body');
-                        res.body.error[0].should.have.property('param').eql('id');
-                        done();
-                    });
-            });
-        });
-
         it('should not PUT a card when name is missing', done => {
+            const cardId = new mongoose.Types.ObjectId();
+            const projectId = new mongoose.Types.ObjectId();
             const card = new Card({
-                _id: 'id',
+                _id: cardId,
                 name: 'example',
-                project: 'projectId',
+                project: projectId,
                 tasks: []
             });
 
             card.save().then(savedCard => {
                 const cardWithMissingName = {
-                    id: 'id',
-                    project: 'projectId'
+                    id: cardId,
+                    project: projectId
                 }
 
                 chai.request(api)
@@ -307,7 +256,7 @@ describe('Card API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -318,16 +267,17 @@ describe('Card API endpoint', () => {
         });
 
         it('should not PUT a card when projectID is missing', done => {
+            const cardId = new mongoose.Types.ObjectId();
             const card = new Card({
-                _id: 'id',
+                _id: cardId,
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
             card.save().then(savedCard => {
                 const cardWithMissingProjectId = {
-                    id: 'id',
+                    id: cardId,
                     name: 'example'
                 }
 
@@ -338,7 +288,7 @@ describe('Card API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -349,18 +299,20 @@ describe('Card API endpoint', () => {
         });
 
         it('should PUT and update a card when required data is supplied', done => {
+            const cardId = new mongoose.Types.ObjectId();
+            const projectId = new mongoose.Types.ObjectId();
             const card = new Card({
-                _id: 'id',
+                _id: cardId,
                 name: 'example',
-                project: new mongoose.Types.ObjectId(),
+                project: projectId,
                 tasks: []
             });
 
             card.save().then(savedCard => {
                 const cardWithFullInfo = {
-                    id: 'id',
+                    id: cardId,
                     name: 'New Name',
-                    project: 'projectId'
+                    project: projectId
                 }
 
                 chai.request(api)
@@ -372,9 +324,9 @@ describe('Card API endpoint', () => {
                         res.body.should.be.an('object');
                         res.body.should.have.property('message').eql('Card updated successfully');
                         res.body.should.have.property('card_data').which.is.an('object');
-                        res.body.card_data.should.have.property('_id').eql(savedCard._id);
+                        res.body.card_data.should.have.property('id').eql(savedCard._id.toString());
                         res.body.card_data.should.have.property('name').eql(cardWithFullInfo.name);
-                        res.body.card_data.should.have.property('project').eql(cardWithFullInfo.project);
+                        res.body.card_data.should.have.property('project').eql(cardWithFullInfo.project.toString());
                         res.body.card_data.should.have.property('tasks').which.is.an('array');
                         done();
                     });
@@ -385,8 +337,9 @@ describe('Card API endpoint', () => {
     describe('DELETE /cards/:id', () => {
         it('should DELETE a card when ID is valid', done => {
             const projectId = new mongoose.Types.ObjectId();
+            const cardId = new mongoose.Types.ObjectId();
             const card = new Card({
-                _id: 'card1',
+                _id: cardId,
                 name: 'example',
                 project: projectId,
                 tasks: []
@@ -396,7 +349,7 @@ describe('Card API endpoint', () => {
                 _id: projectId,
                 name: 'Example',
                 user: new mongoose.Types.ObjectId(),
-                cards: ['card1']
+                cards: [cardId]
             });
 
             project.save().then(savedProject => {
@@ -415,8 +368,9 @@ describe('Card API endpoint', () => {
 
         it('should return error when ID is invalid', done => {
             const projectId = new mongoose.Types.ObjectId();
+            const cardId = new mongoose.Types.ObjectId();
             const card = new Card({
-                _id: 'card1',
+                _id: cardId,
                 name: 'example',
                 project: projectId,
                 tasks: []
@@ -426,13 +380,13 @@ describe('Card API endpoint', () => {
                 _id: projectId,
                 name: 'Example',
                 user: new mongoose.Types.ObjectId(),
-                cards: ['card1']
+                cards: [cardId]
             });
 
             project.save().then(savedProject => {
                 card.save().then(savedCard => {
                     chai.request(api)
-                        .del('/api/cards/' + savedCard._id  + '1')
+                        .del('/api/cards/' + new mongoose.Types.ObjectId())
                         .set('Authorization', 'Bearer ' + token)
                         .end((err, res) => {
                             res.should.have.status(409);
@@ -446,7 +400,7 @@ describe('Card API endpoint', () => {
 
         it('should not DELETE a card when project update fails', done => {
             const card = new Card({
-                _id: 'card1',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 project: new mongoose.Types.ObjectId(),
                 tasks: []
@@ -469,9 +423,9 @@ describe('Card API endpoint', () => {
     describe('GET /cards/:id/tasks', () => {
         it('should GET an array of card tasks when ID is valid', done => {
             const card = new Card({
-                _id: 'card1',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
@@ -490,15 +444,15 @@ describe('Card API endpoint', () => {
 
         it('should return error when ID is invalid', done => {
             const card = new Card({
-                _id: 'card1',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
             card.save().then(savedCard => {
                 chai.request(api)
-                    .get('/api/cards/' + savedCard._id + '1' + '/tasks')
+                    .get('/api/cards/' + new mongoose.Types.ObjectId() + '/tasks')
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(409);
@@ -512,10 +466,11 @@ describe('Card API endpoint', () => {
 
     describe('PUT /cards/:id/tasks', () => {
         it('should PUT and update card tasks when ID is valid', done => {
+            const cardId = new mongoose.Types.ObjectId();
             const card = new Card({
-                _id: 'card1',
+                _id: cardId,
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: ['task1']
             });
 
@@ -537,15 +492,15 @@ describe('Card API endpoint', () => {
 
         it('should return error when ID is invalid', done => {
             const card = new Card({
-                _id: 'card1',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: ['task1']
             });
 
             card.save().then(savedCard => {
                 chai.request(api)
-                    .put('/api/cards/' + savedCard._id + '1' + '/tasks')
+                    .put('/api/cards/' + new mongoose.Types.ObjectId() + '/tasks')
                     .set('Authorization', 'Bearer ' + token)
                     .send({tasks: 'task1,task2,task3'})
                     .end((err, res) => {

@@ -232,18 +232,19 @@ describe('Task API endpoint', () => {
         });
 
         it('should POST and create a task when required data is supplied and card exists', done => {
+            const cardId = new mongoose.Types.ObjectId();
             const task = {
                 id: 'taskId',
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: cardId.toString()
             }
 
             const card = new Card({
-                _id: 'cardId',
+                _id: cardId,
                 name: 'example',
-                project: 'projectID',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             })
 
@@ -503,9 +504,9 @@ describe('Task API endpoint', () => {
             });
 
             const card = new Card({
-                _id: 'cardId',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: ['taskId']
             });
 
@@ -553,10 +554,11 @@ describe('Task API endpoint', () => {
                 dependencies: []
             });
 
+            const destCardId = new mongoose.Types.ObjectId();
             const destCard = new Card({
-                _id: 'destCardId',
+                _id: destCardId,
                 name: 'Source',
-                project: 'projectId'
+                project: new mongoose.Types.ObjectId()
             });
 
             destCard.save().then(savedCard => {
@@ -566,7 +568,7 @@ describe('Task API endpoint', () => {
                         name: 'example',
                         description: 'example desc',
                         label: 'Default',
-                        card: 'destCardId',
+                        card: destCardId.toString(),
                         dependencies: 'task2,task3'
                     }
                     chai.request(api)
@@ -593,10 +595,11 @@ describe('Task API endpoint', () => {
                 dependencies: []
             });
 
+            const srcCardId = new mongoose.Types.ObjectId();
             const srcCard = new Card({
-                _id: 'srcCardId',
+                _id: srcCardId,
                 name: 'Source',
-                project: 'projectId'
+                project: new mongoose.Types.ObjectId()
             });
 
             srcCard.save().then(savedCard => {
@@ -624,26 +627,29 @@ describe('Task API endpoint', () => {
         });
 
         it('should PUT and update a task when required data is supplied and cards exist', done => {
+            const srcCardId = new mongoose.Types.ObjectId();
+            const destCardId = new mongoose.Types.ObjectId();
+
             const task = new Task({
                 _id: 'taskId',
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'srcCardId',
+                card: srcCardId.toString(),
                 dependencies: []
             });
 
             const srcCard = new Card({
-                _id: 'srcCardId',
+                _id: srcCardId,
                 name: 'Source',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: ['taskId']
             });
 
             const destCard = new Card({
-                _id: 'destCardId',
+                _id: destCardId,
                 name: 'Source',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: []
             });
 
@@ -656,7 +662,7 @@ describe('Task API endpoint', () => {
                             description: 'example description',
                             label: 'Code',
                             dueDate: Date.now().toString(),
-                            card: 'destCardId',
+                            card: destCardId.toString(),
                             dependencies: 'task2,task3'
                         }
                         chai.request(api)
@@ -685,19 +691,20 @@ describe('Task API endpoint', () => {
 
     describe('DELETE /tasks/:id', () => {
         it('should DELETE a task when ID is valid', done => {
+            const cardId = new mongoose.Types.ObjectId();
             const task = new Task({
                 _id: 'taskId',
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId',
+                card: cardId.toString(),
                 dependencies: []
             });
 
             const card = new Card({
-                _id: 'cardId',
+                _id: cardId,
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: ['taskId']
             });
 
@@ -726,9 +733,9 @@ describe('Task API endpoint', () => {
             });
 
             const card = new Card({
-                _id: 'cardId',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
-                project: 'projectId',
+                project: new mongoose.Types.ObjectId(),
                 tasks: ['taskId']
             });
 

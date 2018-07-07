@@ -487,6 +487,7 @@ describe('Project API endpoint', () => {
 
     describe('PUT /projects/:id/cards', () => {
         it('should PUT and update project cards when ID is valid', done => {
+            const cardId = new mongoose.Types.ObjectId().toString();
             const project = new Project({
                 _id: new mongoose.Types.ObjectId(),
                 name: 'example',
@@ -498,13 +499,13 @@ describe('Project API endpoint', () => {
                 chai.request(api)
                     .put('/api/projects/' + savedProject._id + '/cards')
                     .set('Authorization', 'Bearer ' + token)
-                    .send({cards: 'card1,card2'})
+                    .send({cards: cardId})
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
                         res.body.should.have.property('message').eql('Project updated successfully');
                         res.body.should.have.property('project_data').which.is.an('array');
-                        res.body.project_data.should.be.eql(['card1', 'card2']);
+                        res.body.project_data.should.be.eql([cardId]);
                         done();
                     });
             });
