@@ -1,11 +1,14 @@
 import { ADD_CARD,
          UPDATE_CARD,
          REMOVE_CARD,
+         FETCH_PROJECT_CARDS,
+         FETCH_CARDS_SUCCESS,
          ADD_TASK,
          REMOVE_TASK,
          MOVE_TASK } from '../actions/actionTypes';
 
 const initialState = {
+    isFetching: false,
     byId: {},
     allIds: []
 }
@@ -14,7 +17,6 @@ const initialState = {
 function addCardById(byIdState, action) {
     const { payload } = action;
     const newCard = {
-        id: action.id,
         ...payload,
         tasks: []
     }
@@ -24,8 +26,8 @@ function addCardById(byIdState, action) {
 }
 
 function updateCardById(byIdState, action) {
-    const cardId = action.id;
     const { payload } = action;
+    const cardId = payload.id;
     const updatedCard = Object.assign({}, byIdState[cardId], payload);
 
     return Object.assign({}, byIdState, {
@@ -93,11 +95,19 @@ function moveTaskFromSrcToDestCard(byIdState, action) {
 }
 
 function addCardAllIds(allIdsState, action) {
-    return [...allIdsState, action.id];
+    if (allIdsState.includes(action.payload.id)) {
+        return allIdsState;
+    }
+
+    return [...allIdsState, action.payload.id];
 }
 
 function removeCardAllIds(allIdsState, action) {
     return allIdsState.filter(cardId => cardId !== action.id);
+}
+
+function setFetching(value) {
+    return value;
 }
 
 //SLICE REDUCERS
@@ -121,9 +131,18 @@ function reduceAllIds(allIdsState, action) {
     }
 }
 
+function reduceIsFetching(fetchingState, action) {
+    switch(action.type) {
+        case FETCH_PROJECT_CARDS: return setFetching(true);
+        case FETCH_CARDS_SUCCESS: return setFetching(false);
+        default: return fetchingState;
+    }
+}
+
 //DOMAIN REDUCER
 export function cardReducer(state = initialState, action) {
     return {
+        isFetching: reduceIsFetching(state.isFetching, action),
         byId: reduceById(state.byId, action),
         allIds: reduceAllIds(state.allIds, action)
     }

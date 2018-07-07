@@ -1,5 +1,7 @@
 const Card = require('../models/card');
 const Project = require('../models/project');
+const mapCard = require('../utils/mapCard');
+const mongoose = require('mongoose');
 
 exports.getCardList = async function(req, res, next) {
     try {
@@ -24,7 +26,7 @@ exports.getSingleCard = async function(req, res, next) {
                     .populate({path: 'tasks', select: '-__v'})
                     .exec();
         
-        res.status(200).json(card);
+        res.status(200).json(mapCard(card));
     }
     catch(err) {
         return next(err);
@@ -36,12 +38,12 @@ exports.createSingleCard = async function(req, res, next) {
     escapeAndTrimCardData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.status(409).json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occurred', error: errors});
         return;
     }
 
     const card = new Card({
-        _id: req.body.id,
+        _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         project: req.body.project,
         tasks: []
@@ -51,7 +53,7 @@ exports.createSingleCard = async function(req, res, next) {
         const projectUpdateMsg = await addCardToContainingProject(card.project, card._id);
         if (projectUpdateMsg === 'Project update successful during card create') {
             await card.save();
-            res.status(201).json({message: 'Card created successfully', card_data: card});
+            res.status(201).json({message: 'Card created successfully', card_data: mapCard(card)});
         }
         else {
             res.status(409).json({message: 'Card not created, project update failed'});
@@ -84,7 +86,7 @@ exports.updateSingleCard = async function(req, res, next) {
     escapeAndTrimCardData(req);
     const errors = req.validationErrors();
     if (errors) {
-        res.status(409).json({message: 'Error occured', error: errors});
+        res.status(409).json({message: 'Error occurred', error: errors});
         return;
     }
 
@@ -93,12 +95,12 @@ exports.updateSingleCard = async function(req, res, next) {
                             .select({__v: 0})
                             .exec();
 
-        foundCard._id = req.body.id;
+        foundCard._id = cardId;
         foundCard.name = req.body.name;
         foundCard.project = req.body.project;
 
         const updatedCard = await foundCard.save();
-        res.status(200).json({message: 'Card updated successfully', card_data: updatedCard});
+        res.status(200).json({message: 'Card updated successfully', card_data: mapCard(updatedCard)});
     }
     catch(err) {
         return next(err);
@@ -192,7 +194,7 @@ exports.updateCardTasks = async function(req, res, next) {
 }
 
 function checkIfRequiredCardDataIsPresent(req) {
-    req.checkBody('id', 'Missing Id').notEmpty();
+    //req.checkBody('id', 'Missing Id').notEmpty();
     req.checkBody('name', 'Missing name').notEmpty();
     req.checkBody('project', 'Missing project Id').notEmpty();
 }

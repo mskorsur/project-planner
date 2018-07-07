@@ -16,9 +16,14 @@ export const REMOVE_PROJECT = 'REMOVE PROJECT';
 export const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT';
 
 //Card actions
+export const ADD_CARD_REQUEST = 'ADD_CARD_REQUEST';
 export const ADD_CARD = 'ADD_CARD';
+export const UPDATE_CARD_REQUEST = 'UPDATE_CARD_REQUEST';
 export const UPDATE_CARD = 'UPDATE_CARD';
+export const REMOVE_CARD_REQUEST = 'REMOVE_CARD_REQUEST';
 export const REMOVE_CARD = 'REMOVE_CARD';
+export const FETCH_PROJECT_CARDS = 'FETCH_PROJECT_CARDS';
+export const FETCH_CARDS_SUCCESS = 'FETCH_CARDS_SUCCESS';
 
 //Task actions
 export const ADD_TASK = 'ADD_TASK';

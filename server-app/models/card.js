@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const cardSchema = new Schema({
-    _id: { type: String, required: true },
+    _id: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true, maxlength: 40 },
-    project: { type: String, required: true },
+    project: { type: Schema.Types.ObjectId, required: true },
     tasks: [{ type: String, ref: 'Task' }]
 });
 

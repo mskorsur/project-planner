@@ -18,7 +18,10 @@ class Card extends React.Component {
 
     handleCardNameSubmit = (event) => {
         event.preventDefault();
-        this.props.edit(this.props.card.id, {name: this.state.cardName});
+
+        const cardData = Object.assign({}, this.props.card, {name: this.state.cardName});
+        delete cardData.tasks;
+        this.props.edit(this.props.card.id, cardData);
         this.setState({isEditable: !this.state.isEditable});
     }
 
