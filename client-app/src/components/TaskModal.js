@@ -64,6 +64,10 @@ class TaskModal extends React.Component {
                     <p>{this.props.modalData[TASK].description}</p>
                 </div>
                 <div className="alert alert-border-only" role="alert">
+                    <h5>Due date {this.isTaskDue()}</h5>
+                    <p>{new Date(this.props.modalData[TASK].dueDate).toDateString()}</p>
+                </div>
+                <div className="alert alert-border-only" role="alert">
                     <h5>Dependencies</h5>
                     {this.renderTaskDependenciesAsListItems()}
                 </div>
@@ -83,6 +87,20 @@ class TaskModal extends React.Component {
         else {
             return `label-${this.props.modalData[TASK].label.toLowerCase()}`
         }
+    }
+
+    isTaskDue = () => {
+        const todayDate = new Date();
+        const taskDate = new Date(this.props.modalData[TASK].dueDate);
+        const isTaskDueToday = todayDate.toDateString() === taskDate.toDateString();
+
+        return isTaskDueToday
+        ? (
+            <span className="text-warning ml-2">
+                <i className="fas fa-exclamation-triangle"></i>Task is due today!
+            </span>
+          )
+        : '' ;
     }
 
     renderTaskDependenciesAsListItems = () => {

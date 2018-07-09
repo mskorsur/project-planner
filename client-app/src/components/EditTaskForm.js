@@ -4,6 +4,15 @@ import { ModalBody } from 'reactstrap';
 const TASK = 0;
 const ALL_TASKS = 1;
 
+const labelSelectOptions = [
+    {value: 'Default'},
+    {value: 'Code'},
+    {value: 'Design'},
+    {value: 'Problem'},
+    {value: 'Info'},
+    {value: 'Other'}
+];
+
 class EditTaskForm extends React.Component {
     constructor(props) {
         super(props);
@@ -12,6 +21,7 @@ class EditTaskForm extends React.Component {
             name: this.props[TASK].name,
             description: this.props[TASK].description,
             label: this.props[TASK].label,
+            dueDate: this.props[TASK].dueDate,
             dependencies: this.props[TASK].dependencies,
             card: this.props[TASK].card,
         }
@@ -23,6 +33,10 @@ class EditTaskForm extends React.Component {
 
     handleLabelChange = (event) => {
         this.setState({label: event.target.value});
+    }
+
+    handleDueDateChange = (event) => {
+        this.setState({dueDate: event.target.value});
     }
 
     handleDescriptionChange = (event) => {
@@ -55,7 +69,8 @@ class EditTaskForm extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
         let updatedTaskData = {...this.state};
-        updatedTaskData.dependencies = updatedTaskData.dependencies.map(dep => dep.id);
+        updatedTaskData.dueDate = new Date(updatedTaskData.dueDate);
+        updatedTaskData.dependencies = updatedTaskData.dependencies.map(dep => dep.id).join(',');
 
         this.props.toggle();
         this.props.update(this.props[TASK].id, updatedTaskData);
@@ -64,6 +79,12 @@ class EditTaskForm extends React.Component {
     renderCardTasksAsCheckboxes = () => {
         let cardTasksWithoutCurrentTask = this.props[ALL_TASKS].filter(task => task.id !== this.props[TASK].id);
         return this.renderCheckboxes(cardTasksWithoutCurrentTask);
+    }
+
+    renderLabelSelectOptions = () => {
+        return labelSelectOptions.map(option => {
+            return <option key={option.value} value={option.value}>{option.value}</option>;
+        });
     }
 
     renderCheckboxes = (tasks) => {
@@ -98,18 +119,18 @@ class EditTaskForm extends React.Component {
                     <div className="form-group">
                         <label htmlFor="task-label">Label</label>
                         <select className="form-control" id="task-label" value={this.state.label} onChange={this.handleLabelChange}>
-                            <option value="Default">Default</option>
-                            <option value="Code">Code</option>
-                            <option value="Design">Design</option>
-                            <option value="Problem">Problem</option>
-                            <option value="Info">Info</option>
-                            <option value="Other">Other</option>
+                            {this.renderLabelSelectOptions()}
                         </select>
                     </div>
                     <div className="form-group">
                         <label htmlFor="task-description">Description</label>
                         <textarea className="form-control" id="task-description" required placeholder="Enter description here"
                         value={this.state.description} onChange={this.handleDescriptionChange} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="task-date">Due date</label>
+                        <input className="form-control" id="task-date" type="date" 
+                        value={this.state.dueDate} onChange={this.handleDueDateChange}/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="task-label">Dependencies</label>

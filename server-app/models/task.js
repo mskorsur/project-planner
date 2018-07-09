@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const taskSchema = new Schema({
-    _id: { type: String, required: true },
+    _id: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
-    description: { type: String, required: true, maxlength: 400 },
+    description: { type: String, maxlength: 400 },
     label: { type: String, required: true, maxlength: 20 },
     dueDate: { type: Date },
-    dependencies: [{ type: String, ref: 'Task' }],
-    card: { type: String, ref: 'Card', required: true }
+    dependencies: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
+    card: { type: Schema.Types.ObjectId, ref: 'Card', required: true }
 });
 
 taskSchema

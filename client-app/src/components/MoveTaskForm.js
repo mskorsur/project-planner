@@ -26,8 +26,11 @@ class MoveTaskForm extends React.Component {
         event.preventDefault();
 
         this.props.toggle();
-        this.props.update(this.props[TASK].id, {card: this.state.destinationCardId});
-        this.props.move(this.props[TASK].id, this.state.sourceCardId, this.state.destinationCardId);
+        //this.props.update(this.props[TASK].id, {card: this.state.destinationCardId});
+        let updatedTaskData = {...this.props[TASK]};
+        updatedTaskData.dueDate = new Date(updatedTaskData.dueDate);
+        updatedTaskData.dependencies = updatedTaskData.dependencies.map(dep => dep.id).join(',');
+        this.props.move(updatedTaskData, this.state.sourceCardId, this.state.destinationCardId);
     }
 
     renderCurrentCard = () => {

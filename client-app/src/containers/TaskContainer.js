@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { addTask, removeTask, updateTask, moveTask } from '../redux/actions/taskActions';
+import { addTaskRequest, removeTaskRequest, updateTaskRequest, moveTaskRequest } from '../redux/actions/taskActions';
 import { activateModal } from '../redux/actions/uiActions';
 
 import Task from '../components/Task';
@@ -50,10 +50,10 @@ const selectCurrentProjectCards = (cards, currentProjectId) => {
 const mapDispatchToProps = dispatch => {
     return {
         activateModal: (data) => {dispatch(activateModal(data))},
-        addTask: (data) => {dispatch(addTask(data))},
-        updateTask: (id, data) => {dispatch(updateTask(id, data))},
-        moveTask: (taskId, srcCardId, destCardId) => {dispatch(moveTask(taskId, srcCardId, destCardId))},
-        removeTask: (taskId, cardId) => {dispatch(removeTask(taskId, cardId))}
+        addTask: (data) => {dispatch(addTaskRequest(data))},
+        updateTask: (id, data) => {dispatch(updateTaskRequest(id, data))},
+        moveTask: (task, srcCardId, destCardId) => {dispatch(moveTaskRequest(task, srcCardId, destCardId))},
+        removeTask: (taskId, cardId) => {dispatch(removeTaskRequest(taskId, cardId))}
     }
 }
 
@@ -86,7 +86,9 @@ class TaskContainer extends React.Component {
             name: 'New Task',
             description: '',
             label: 'Default',
-            card: this.props.card.id
+            dueDate: new Date(),
+            card: this.props.card.id,
+            dependencies: [].join(',')
         };
 
         this.props.addTask(newTask);

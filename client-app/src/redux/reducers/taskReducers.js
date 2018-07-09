@@ -11,9 +11,7 @@ const initialState = {
 function addTaskById(byIdState, action) {
     const { payload } = action;
     const newTask = {
-        id: action.id,
-        ...payload,
-        dependencies: []
+        ...payload
     }
     return Object.assign({}, byIdState, {
         [newTask.id]: newTask
@@ -21,8 +19,8 @@ function addTaskById(byIdState, action) {
 }
 
 function updateTaskById(byIdState, action) {
-    const taskId = action.id;
     const { payload } = action;
+    const taskId = payload.id;
     const updatedTask = Object.assign({}, byIdState[taskId], payload);
 
     return Object.assign({}, byIdState, {
@@ -39,7 +37,11 @@ function removeTaskById(byIdState, action) {
 }
 
 function addTaskAllIds(allIdsState, action) {
-    return [...allIdsState, action.id];
+    if (allIdsState.includes(action.payload.id)) {
+        return allIdsState;
+    }
+
+    return [...allIdsState, action.payload.id];
 }
 
 function removeTaskAllIds(allIdsState, action) {
