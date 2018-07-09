@@ -5,7 +5,7 @@ const cardSchema = new Schema({
     _id: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true, maxlength: 40 },
     project: { type: Schema.Types.ObjectId, required: true },
-    tasks: [{ type: String, ref: 'Task' }]
+    tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }]
 });
 
 cardSchema

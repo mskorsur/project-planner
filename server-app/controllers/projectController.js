@@ -2,6 +2,7 @@ const Project = require('../models/project');
 const User = require('../models/user');
 const mapProject = require('../utils/mapProject');
 const mapCard = require('../utils/mapCard');
+const mapTask = require('../utils/mapTask');
 const mongoose = require('mongoose');
 
 exports.getProjectList = async function(req, res, next) {
@@ -145,11 +146,19 @@ exports.getProjectCards = async function(req, res, next) {
     try {
         const project = await Project.findById(projectId)
                         .select({__v: 0})
-                        .populate({path: 'cards', select: '-__v'})
+                        .populate({
+                            path: 'cards', 
+                            select: '-__v',
+                            populate: { path: 'tasks', select: '-__v' }
+                        })
                         .exec();
 
         if (project !== null) {
-            const mappedCards = project.cards.map(card => mapCard(card));
+            let mappedCards = project.cards.map(card => mapCard(card));
+            mappedCards.forEach(card => {
+                card.tasks = card.tasks.map(task => mapTask(task));
+            });
+            
             res.status(200).json({cards: mappedCards});
         }
         else {
@@ -189,7 +198,7 @@ async function removeProjectFromContainingUser(userId, projectId) {
                     .select({projects: 1})
                     .exec();
         
-        const projectsWithoutDeletedProject = user.projects.filter(project => project !== projectId);
+        const projectsWithoutDeletedProject = user.projects.filter(project => project.toString() !== projectId);
         user.projects = [...projectsWithoutDeletedProject];
         await user.save();
         return 'User update successful during project delete';

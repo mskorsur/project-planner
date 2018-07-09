@@ -45,7 +45,11 @@ function removeCardById(byIdState, action) {
 
 function addTaskToCard(byIdState, action) {
     const cardId = action.payload.card;
-    const taskId = action.id;
+    const taskId = action.payload.id;
+
+    if (byIdState[cardId].tasks.includes(taskId)) {
+        return byIdState;
+    }
 
     const cardTasksWithNewTask = [...byIdState[cardId].tasks, taskId];
     const updatedCard = Object.assign({}, byIdState[cardId], {

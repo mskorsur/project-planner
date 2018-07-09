@@ -140,7 +140,7 @@ async function removeCardFromContainingProject(projectId, cardId) {
                         .select({cards: 1})
                         .exec();
                     
-        const cardsWithoutDeletedCard = project.cards.filter(card => card !== cardId);
+        const cardsWithoutDeletedCard = project.cards.filter(card => card.toString() !== cardId);
         project.cards = [...cardsWithoutDeletedCard];
         await project.save();
         return 'Project update successful during card delete';

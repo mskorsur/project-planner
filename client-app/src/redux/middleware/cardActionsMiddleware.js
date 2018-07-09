@@ -1,5 +1,6 @@
 import { ADD_CARD_REQUEST, UPDATE_CARD_REQUEST, REMOVE_CARD_REQUEST, FETCH_PROJECT_CARDS } from '../actions/actionTypes';
 import { addCard, updateCard, removeCard, fetchCardsSuccess } from '../actions/cardActions';
+import { addTask } from '../actions/taskActions';
 import { createCard, updateCardData, removeCardData } from '../../services/cardService';
 import { getProjectCards } from '../../services/projectService';
 import { activateErrorModal } from '../../utils/NotificationModalsManager';
@@ -94,6 +95,11 @@ function handleFetchProjectCards(store, action) {
         else {
             parsedResponse.cards.forEach(card => {
                 store.dispatch(addCard(card));
+               
+            });
+
+            parsedResponse.cards.forEach(card => {
+                card.tasks.forEach(task => store.dispatch(addTask(task)));
             });
 
             store.dispatch(fetchCardsSuccess());
