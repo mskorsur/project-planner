@@ -66,11 +66,11 @@ describe('Task API endpoint', () => {
             let tasks = [];
             for (let i = 0; i < 3; i++) {
                 const task = new Task({
-                    _id: i.toString(),
+                    _id: new mongoose.Types.ObjectId(),
                     name: 'example',
                     description: 'example desc',
                     label: 'Default',
-                    card: 'cardId'
+                    card: new mongoose.Types.ObjectId()
                 });
                 tasks.push(task);
             }
@@ -90,36 +90,12 @@ describe('Task API endpoint', () => {
     });
 
     describe('POST /tasks', () => {
-        it('should not POST a task when ID is missing', done => {
-            const task = {
-                name: 'example',
-                description: 'example desc',
-                label: 'Default',
-                card: 'cardId'
-            }
-
-            chai.request(api)
-                .post('/api/tasks')
-                .set('Authorization', 'Bearer ' + token)
-                .send(task)
-                .end((err, res) => {
-                    res.should.have.status(409);
-                    res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
-                    res.body.should.have.property('error').which.is.an('array');
-                    res.body.error[0].should.be.an('object');
-                    res.body.error[0].should.have.property('location').eql('body');
-                    res.body.error[0].should.have.property('param').eql('id');
-                    done();
-                });
-        });
-
         it('should not POST a task when name is missing', done => {
             const task = {
-                id: 'taskId',
+                id: new mongoose.Types.ObjectId(),
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: new mongoose.Types.ObjectId()
             }
 
             chai.request(api)
@@ -129,7 +105,7 @@ describe('Task API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -140,10 +116,10 @@ describe('Task API endpoint', () => {
 
         it('should not POST a task when description is missing', done => {
             const task = {
-                id: 'taskId',
+                id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 label: 'Default',
-                card: 'cardId'
+                card: new mongoose.Types.ObjectId()
             }
 
             chai.request(api)
@@ -153,7 +129,7 @@ describe('Task API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -164,10 +140,10 @@ describe('Task API endpoint', () => {
 
         it('should not POST a task when label is missing', done => {
             const task = {
-                id: 'taskId',
+                id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
-                card: 'cardId'
+                card: new mongoose.Types.ObjectId()
             }
 
             chai.request(api)
@@ -177,7 +153,7 @@ describe('Task API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -188,7 +164,7 @@ describe('Task API endpoint', () => {
 
         it('should not POST a task when cardID is missing', done => {
             const task = {
-                id: 'taskId',
+                id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default'
@@ -201,7 +177,7 @@ describe('Task API endpoint', () => {
                 .end((err, res) => {
                     res.should.have.status(409);
                     res.body.should.be.an('object');
-                    res.body.should.have.property('message').eql('Error occured');
+                    res.body.should.have.property('message').eql('Error occurred');
                     res.body.should.have.property('error').which.is.an('array');
                     res.body.error[0].should.be.an('object');
                     res.body.error[0].should.have.property('location').eql('body');
@@ -212,11 +188,11 @@ describe('Task API endpoint', () => {
 
         it('should not create a task when card does not exist', done => {
             const task = {
-                id: 'taskId',
+                id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: new mongoose.Types.ObjectId()
             }
 
             chai.request(api)
@@ -234,7 +210,7 @@ describe('Task API endpoint', () => {
         it('should POST and create a task when required data is supplied and card exists', done => {
             const cardId = new mongoose.Types.ObjectId();
             const task = {
-                id: 'taskId',
+                id: new mongoose.Types.ObjectId().toString(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
@@ -258,7 +234,7 @@ describe('Task API endpoint', () => {
                     res.body.should.be.an('object');
                     res.body.should.have.property('message').eql('Task created successfully');
                     res.body.should.have.property('task_data').which.is.an('object');
-                    res.body.task_data.should.have.property('_id');
+                    res.body.task_data.should.have.property('id');
                     res.body.task_data.should.have.property('name');
                     res.body.task_data.should.have.property('description');
                     res.body.task_data.should.have.property('label');
@@ -273,12 +249,12 @@ describe('Task API endpoint', () => {
     describe('GET /tasks/:id', () => {
         it('should GET a task when ID is valid', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
                 dueDate: Date.now().toString(),
-                card: 'cardId'
+                card: new mongoose.Types.ObjectId()
             });
 
             task.save().then(savedTask => {
@@ -288,11 +264,11 @@ describe('Task API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('_id').eql(savedTask._id);
+                        res.body.should.have.property('id').eql(savedTask._id.toString());
                         res.body.should.have.property('name').eql(savedTask.name);
                         res.body.should.have.property('description').eql(savedTask.description);
                         res.body.should.have.property('label').eql(savedTask.label);
-                        res.body.should.have.property('card').eql(savedTask.card);
+                        res.body.should.have.property('card').eql(savedTask.card.toString());
                         res.body.should.have.property('dueDate');
                         res.body.should.have.property('dependencies').which.is.an('array');
                         done();
@@ -302,16 +278,16 @@ describe('Task API endpoint', () => {
 
         it('should return null when ID is invalid', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: new mongoose.Types.ObjectId()
             });
 
             task.save().then(savedTask => {
                 chai.request(api)
-                    .get('/api/tasks/' + savedTask._id + '1')
+                    .get('/api/tasks/' + new mongoose.Types.ObjectId())
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -323,55 +299,23 @@ describe('Task API endpoint', () => {
     });
 
     describe('PUT /tasks/:id', () => {
-        it('should not PUT a task when ID is missing', done => {
-            const task = new Task({
-                _id: 'taskId',
-                name: 'example',
-                description: 'example desc',
-                label: 'Default',
-                card: 'cardId'
-            });
-
-            task.save().then(savedTask => {
-                const taskWithMissingId = {
-                    name: 'example',
-                    description: 'example desc',
-                    label: 'Default',
-                    card: 'cardId'
-                }
-
-                chai.request(api)
-                    .put('/api/tasks/' + savedTask._id)
-                    .set('Authorization', 'Bearer ' + token)
-                    .send(taskWithMissingId)
-                    .end((err, res) => {
-                        res.should.have.status(409);
-                        res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
-                        res.body.should.have.property('error').which.is.an('array');
-                        res.body.error[0].should.be.an('object');
-                        res.body.error[0].should.have.property('location').eql('body');
-                        res.body.error[0].should.have.property('param').eql('id');
-                        done();
-                    });
-            });
-        });
-
+        const taskId = new mongoose.Types.ObjectId();
+        const cardId = new mongoose.Types.ObjectId();
         it('should not PUT a task when name is missing', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: cardId
             });
 
             task.save().then(savedTask => {
                 const taskWithMissingName = {
-                    id: 'taskId',
+                    id: taskId.toString(),
                     description: 'example desc',
                     label: 'Default',
-                    card: 'cardId'
+                    card: cardId.toString()
                 }
 
                 chai.request(api)
@@ -381,7 +325,7 @@ describe('Task API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -393,19 +337,19 @@ describe('Task API endpoint', () => {
 
         it('should not PUT a task when description is missing', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: cardId
             });
 
             task.save().then(savedTask => {
                 const taskWithMissingDesc = {
-                    id: 'taskId',
+                    id: taskId.toString(),
                     name: 'example',
                     label: 'Default',
-                    card: 'cardId'
+                    card: cardId.toString()
                 }
 
                 chai.request(api)
@@ -415,7 +359,7 @@ describe('Task API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -427,19 +371,19 @@ describe('Task API endpoint', () => {
 
         it('should not PUT a task when label is missing', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: cardId
             });
 
             task.save().then(savedTask => {
                 const taskWithMissingLabel = {
-                    id: 'taskId',
+                    id: taskId.toString(),
                     name: 'example',
                     description: 'example desc',
-                    card: 'cardId'
+                    card: cardId.toString()
                 }
 
                 chai.request(api)
@@ -449,7 +393,7 @@ describe('Task API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -461,16 +405,16 @@ describe('Task API endpoint', () => {
 
         it('should not PUT a task when cardID is missing', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId'
+                card: cardId
             });
 
             task.save().then(savedTask => {
                 const taskWithMissingCardId = {
-                    id: 'taskId',
+                    id: taskId.toString(),
                     name: 'example',
                     description: 'example desc',
                     label: 'Default'
@@ -483,7 +427,7 @@ describe('Task API endpoint', () => {
                     .end((err, res) => {
                         res.should.have.status(409);
                         res.body.should.be.an('object');
-                        res.body.should.have.property('message').eql('Error occured');
+                        res.body.should.have.property('message').eql('Error occurred');
                         res.body.should.have.property('error').which.is.an('array');
                         res.body.error[0].should.be.an('object');
                         res.body.error[0].should.have.property('location').eql('body');
@@ -495,31 +439,31 @@ describe('Task API endpoint', () => {
 
         it('should PUT and update a task when required data is supplied and card did not change', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId',
+                card: cardId,
                 dependencies: []
             });
 
             const card = new Card({
-                _id: new mongoose.Types.ObjectId(),
+                _id: cardId,
                 name: 'example',
                 project: new mongoose.Types.ObjectId(),
-                tasks: ['taskId']
+                tasks: [taskId]
             });
 
             card.save().then(savedCard => {
                 task.save().then(savedTask => {
                     const taskWithFullInfo = {
-                        id: 'taskId',
+                        id: taskId.toString(),
                         name: 'New name',
                         description: 'example description',
                         label: 'Code',
                         dueDate: Date.now().toString(),
-                        card: 'cardId',
-                        dependencies: 'task2,task3'
+                        card: cardId.toString(),
+                        dependencies: new mongoose.Types.ObjectId().toString()
                     }
 
                     chai.request(api)
@@ -531,12 +475,12 @@ describe('Task API endpoint', () => {
                             res.body.should.be.an('object');
                             res.body.should.have.property('message').eql('Task updated successfully');
                             res.body.should.have.property('task_data').which.is.an('object');
-                            res.body.task_data.should.have.property('_id').eql(savedTask._id);
+                            res.body.task_data.should.have.property('id').eql(savedTask._id.toString());
                             res.body.task_data.should.have.property('name').eql(taskWithFullInfo.name);
                             res.body.task_data.should.have.property('description').eql(taskWithFullInfo.description);
                             res.body.task_data.should.have.property('label').eql(taskWithFullInfo.label);
                             res.body.task_data.should.have.property('dueDate');
-                            res.body.task_data.should.have.property('card').eql(taskWithFullInfo.card);
+                            res.body.task_data.should.have.property('card').eql(taskWithFullInfo.card.toString());
                             res.body.task_data.should.have.property('dependencies').which.is.an('array');
                             done();
                         });
@@ -546,11 +490,11 @@ describe('Task API endpoint', () => {
 
         it('should not update a task if source card does not exist', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'srcCardId',
+                card: new mongoose.Types.ObjectId(),
                 dependencies: []
             });
 
@@ -564,12 +508,12 @@ describe('Task API endpoint', () => {
             destCard.save().then(savedCard => {
                 task.save().then(savedTask => {
                     const taskWithFullInfo = {
-                        id: 'taskId',
+                        id: taskId.toString(),
                         name: 'example',
                         description: 'example desc',
                         label: 'Default',
                         card: destCardId.toString(),
-                        dependencies: 'task2,task3'
+                        dependencies: new mongoose.Types.ObjectId().toString()
                     }
                     chai.request(api)
                         .put('/api/tasks/' + savedTask._id)
@@ -586,16 +530,16 @@ describe('Task API endpoint', () => {
         });
 
         it('should not update a task if destination card does not exist', done => {
+            const srcCardId = new mongoose.Types.ObjectId();
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'srcCardId',
+                card: srcCardId,
                 dependencies: []
             });
 
-            const srcCardId = new mongoose.Types.ObjectId();
             const srcCard = new Card({
                 _id: srcCardId,
                 name: 'Source',
@@ -605,12 +549,12 @@ describe('Task API endpoint', () => {
             srcCard.save().then(savedCard => {
                 task.save().then(savedTask => {
                     const taskWithFullInfo = {
-                        id: 'taskId',
+                        id: taskId.toString(),
                         name: 'example',
                         description: 'example desc',
                         label: 'Default',
-                        card: 'destCardId',
-                        dependencies: 'task2,task3'
+                        card: new mongoose.Types.ObjectId(),
+                        dependencies: new mongoose.Types.ObjectId().toString()
                     }
                     chai.request(api)
                         .put('/api/tasks/' + savedTask._id)
@@ -631,11 +575,11 @@ describe('Task API endpoint', () => {
             const destCardId = new mongoose.Types.ObjectId();
 
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: srcCardId.toString(),
+                card: srcCardId,
                 dependencies: []
             });
 
@@ -643,7 +587,7 @@ describe('Task API endpoint', () => {
                 _id: srcCardId,
                 name: 'Source',
                 project: new mongoose.Types.ObjectId(),
-                tasks: ['taskId']
+                tasks: [taskId]
             });
 
             const destCard = new Card({
@@ -657,13 +601,13 @@ describe('Task API endpoint', () => {
                 srcCard.save().then(savedSrcCard => {
                     task.save().then(savedTask => {
                         const taskWithFullInfo = {
-                            id: 'taskId',
+                            id: taskId.toString(),
                             name: 'New name',
                             description: 'example description',
                             label: 'Code',
                             dueDate: Date.now().toString(),
                             card: destCardId.toString(),
-                            dependencies: 'task2,task3'
+                            dependencies: new mongoose.Types.ObjectId().toString()
                         }
                         chai.request(api)
                             .put('/api/tasks/' + savedTask._id)
@@ -674,7 +618,7 @@ describe('Task API endpoint', () => {
                                 res.body.should.be.an('object');
                                 res.body.should.have.property('message').eql('Task updated successfully');
                                 res.body.should.have.property('task_data').which.is.an('object');
-                                res.body.task_data.should.have.property('_id').eql(savedTask._id);
+                                res.body.task_data.should.have.property('id').eql(savedTask._id.toString());
                                 res.body.task_data.should.have.property('name').eql(taskWithFullInfo.name);
                                 res.body.task_data.should.have.property('description').eql(taskWithFullInfo.description);
                                 res.body.task_data.should.have.property('label').eql(taskWithFullInfo.label);
@@ -692,12 +636,13 @@ describe('Task API endpoint', () => {
     describe('DELETE /tasks/:id', () => {
         it('should DELETE a task when ID is valid', done => {
             const cardId = new mongoose.Types.ObjectId();
+            const taskId = new mongoose.Types.ObjectId();
             const task = new Task({
-                _id: 'taskId',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: cardId.toString(),
+                card: cardId,
                 dependencies: []
             });
 
@@ -705,7 +650,7 @@ describe('Task API endpoint', () => {
                 _id: cardId,
                 name: 'example',
                 project: new mongoose.Types.ObjectId(),
-                tasks: ['taskId']
+                tasks: [taskId]
             });
 
             card.save().then(savedCard => {
@@ -723,26 +668,28 @@ describe('Task API endpoint', () => {
         });
 
         it('should return error when ID is invalid', done => {
+            const taskId = new mongoose.Types.ObjectId();
+            const cardId = new mongoose.Types.ObjectId();
             const task = new Task({
-                _id: 'taskId',
+                _id: taskId,
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId',
+                card: cardId,
                 dependencies: []
             });
 
             const card = new Card({
-                _id: new mongoose.Types.ObjectId(),
+                _id: cardId,
                 name: 'example',
                 project: new mongoose.Types.ObjectId(),
-                tasks: ['taskId']
+                tasks: [taskId]
             });
 
             card.save().then(savedCard => {
                 task.save().then(savedTask => {
                     chai.request(api)
-                        .del('/api/tasks/' + savedTask._id + '1')
+                        .del('/api/tasks/' + new mongoose.Types.ObjectId())
                         .set('Authorization', 'Bearer ' + token)
                         .end((err, res) => {
                             res.should.have.status(409);
@@ -756,11 +703,11 @@ describe('Task API endpoint', () => {
 
         it('should not DELETE a task when card update fails', done => {
             const task = new Task({
-                _id: 'taskId',
+                _id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 description: 'example desc',
                 label: 'Default',
-                card: 'cardId',
+                card: new mongoose.Types.ObjectId(),
                 dependencies: []
             });
 

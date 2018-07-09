@@ -467,24 +467,25 @@ describe('Card API endpoint', () => {
     describe('PUT /cards/:id/tasks', () => {
         it('should PUT and update card tasks when ID is valid', done => {
             const cardId = new mongoose.Types.ObjectId();
+            const taskId = new mongoose.Types.ObjectId();
             const card = new Card({
                 _id: cardId,
                 name: 'example',
                 project: new mongoose.Types.ObjectId(),
-                tasks: ['task1']
+                tasks: []
             });
 
             card.save().then(savedCard => {
                 chai.request(api)
                     .put('/api/cards/' + savedCard._id + '/tasks')
                     .set('Authorization', 'Bearer ' + token)
-                    .send({tasks: 'task1,task2,task3'})
+                    .send({tasks: taskId.toString()})
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.be.an('object');
                         res.body.should.have.property('message').eql('Card updated successfully');
                         res.body.should.have.property('card_data').which.is.an('array');
-                        res.body.card_data.should.be.eql(['task1', 'task2', 'task3']);
+                        res.body.card_data.should.be.eql([taskId.toString()]);
                         done();
                     });
             });
@@ -495,7 +496,7 @@ describe('Card API endpoint', () => {
                 _id: new mongoose.Types.ObjectId(),
                 name: 'example',
                 project: new mongoose.Types.ObjectId(),
-                tasks: ['task1']
+                tasks: [new mongoose.Types.ObjectId()]
             });
 
             card.save().then(savedCard => {
