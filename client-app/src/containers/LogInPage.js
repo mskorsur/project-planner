@@ -37,7 +37,8 @@ class LogInPage extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        this.props.login(this.state);
+        let loginData = Object.assign({}, this.state, {history: this.props.history});
+        this.props.login(loginData);
     }
 
     renderMessageBlock = () => {

@@ -15,6 +15,7 @@ export const authActionsMiddleware = store => next => action => {
                 store.dispatch(setCurrentUser(parsedResponse.initial_state.user.id));
                 store.dispatch(loginSuccess({message: parsedResponse.message, token: parsedResponse.token}));
                 addUserProjectsToState(store.dispatch, parsedResponse.initial_state.projects);
+                action.payload.history.push('/');
             }
             else {
                 store.dispatch(loginFailure({message: parsedResponse.message}));
