@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const Project = require('../models/project');
 const mapCard = require('../utils/mapCard');
+const deleteTasks = require('../utils/deleteTasks');
 const mongoose = require('mongoose');
 
 exports.getCardList = async function(req, res, next) {
@@ -112,7 +113,7 @@ exports.deleteSingleCard = async function(req, res, next) {
 
     try {
         const card = await Card.findById(cardId)
-                    .select({project: 1})
+                    .select({project: 1, tasks: 1})
                     .exec();
         
         if (card === null) {
@@ -122,6 +123,7 @@ exports.deleteSingleCard = async function(req, res, next) {
         
         const projectUpdateMsg = await removeCardFromContainingProject(card.project, cardId)
         if (projectUpdateMsg === 'Project update successful during card delete') {
+            await deleteTasks(card.tasks);
             await Card.findByIdAndRemove(cardId);
             res.status(204).json({message: 'Card deleted successfully'});
         }

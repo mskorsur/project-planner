@@ -3,6 +3,8 @@ const User = require('../models/user');
 const mapProject = require('../utils/mapProject');
 const mapCard = require('../utils/mapCard');
 const mapTask = require('../utils/mapTask');
+const deleteCards = require('../utils/deleteCards');
+const deleteTasks = require('../utils/deleteTasks');
 const mongoose = require('mongoose');
 
 exports.getProjectList = async function(req, res, next) {
@@ -118,7 +120,8 @@ exports.deleteSingleProject = async function(req, res, next) {
 
     try {
         const project = await Project.findById(projectId)
-                        .select({user: 1})
+                        .select({user: 1, cards: 1})
+                        .populate('cards')
                         .exec();
         
         if (project === null) {
@@ -128,6 +131,7 @@ exports.deleteSingleProject = async function(req, res, next) {
         
         const userUpdateMsg = await removeProjectFromContainingUser(project.user, projectId);
         if (userUpdateMsg === 'User update successful during project delete') {
+            await removeCardsAndChildTasks(project.cards);
             await Project.findByIdAndRemove(projectId);
             res.status(204).json({message: 'Project deleted successfully'});
         }
@@ -138,6 +142,14 @@ exports.deleteSingleProject = async function(req, res, next) {
     catch(err) {
         return next(err);
     }
+}
+
+async function removeCardsAndChildTasks(cards) {
+    cards.forEach(async card => {
+        await deleteTasks(card.tasks);
+    });
+
+    await deleteCards(cards);
 }
 
 exports.getProjectCards = async function(req, res, next) {
