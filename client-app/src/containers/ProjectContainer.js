@@ -7,6 +7,7 @@ import { activateModal } from '../redux/actions/uiActions';
 
 import CardContainer from './CardContainer';
 import ProjectStatusSelect from '../components/ProjectStatusSelect';
+import ProjectName from '../components/ProjectName';
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -49,26 +50,16 @@ class ProjectContainer extends React.Component {
         this.props.history.push('/project/all');
     }
 
-    handleStatusUpdate = (status) => {
-        const projectData = Object.assign({}, this.props.currentProject, 
-            {status, lastModified: Date.now().toString()}
-        );
-        delete projectData.cards;
-        this.props.updateProject(projectData.id, projectData);
-    }
-
     render() {
         return (
             <Fragment>
                 <div className="row">
-                    <div className="col-5">
-                        <h2 className="heading-weight heading-color">{this.props.currentProject.name}</h2>
-                    </div>
+                    <ProjectName project={this.props.currentProject}
+                                changeName={this.props.updateProject} />
                     <div className="col-4 ml-2">
-                        <ProjectStatusSelect currentStatus={this.props.currentProject.status}
-                                            changeStatus={this.handleStatusUpdate}/>
-                        <button type="button" className="btn btn-primary mx-1 my-1"><i className="far fa-save"></i> Save</button>
-                        <button type="button" className="btn btn-primary mx-1 my-1" onClick={this.handleDeleteButtonClick}>
+                        <ProjectStatusSelect project={this.props.currentProject}
+                                            changeStatus={this.props.updateProject}/>
+                        <button type="button" className="btn btn-danger mx-1 my-1" onClick={this.handleDeleteButtonClick}>
                             <i className="far fa-trash-alt"></i> Delete
                         </button>
                     </div>

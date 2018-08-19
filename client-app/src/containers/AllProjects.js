@@ -2,11 +2,14 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import StatusFilterSelect from '../components/StatusFilterSelect';
+
 const mapStateToProps = state => {
     const userId = state.currentUser;
     const userProjects = state.users.byId[userId].projects;
     return {
-        currentUserProjects: selectCurrentUserProjects(state.projects.byId, userProjects)
+        currentUserProjects: selectCurrentUserProjects(state.projects.byId, userProjects),
+        statusFilter: state.ui.statusFilter
     }
 }
 
@@ -36,9 +39,10 @@ class AllProjects extends React.Component {
     }
 
     renderProjectDataAsTableRow = () => {
-        return this.props.currentUserProjects.map((project, index) => {
+        const filteredProjects = this.filterProjectsBasedOnStatusFilter(this.props.currentUserProjects, this.props.statusFilter);
+        return filteredProjects.map((project, index) => {
             return (
-                <tr key={project.id}>
+                <tr key={index}>
                     <th scope="row" className="h5 font-weight-bold">{index + 1}</th>
                     <td className="h5"><Link to={`/project/${project.id}`}>{project.name}</Link></td>
                     <td className="h5 text-capitalize">{project.status}</td>
@@ -48,10 +52,25 @@ class AllProjects extends React.Component {
         });
     }
 
+    filterProjectsBasedOnStatusFilter = (projects, statusFilter) => {
+        if (statusFilter === 'All') {
+            return projects;
+        }
+
+        return projects.filter(project => project.status === statusFilter);
+    }
+
     render() {
         return (
             <Fragment>
-                <h2 className="heading-weight heading-color">All Projects</h2>
+                <div className="row">
+                    <div className="col-md-10">
+                        <h2 className="heading-weight heading-color">All Projects</h2>
+                    </div>
+                    <div className="col-md-2">
+                        <StatusFilterSelect />
+                    </div>
+                </div>
                 <div className="row mt-4">
                     {this.renderCurrentUserProjects()}
                 </div>

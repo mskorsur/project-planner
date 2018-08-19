@@ -11,13 +11,19 @@ class ProjectStatusSelect extends React.Component {
         super(props);
 
         this.state = {
-            status: this.props.currentStatus
+            status: this.props.project.status
         }
     }
 
     handleStatusChange = (event) => {
         this.setState({status: event.target.value});
-        this.props.changeStatus(event.target.value);
+
+        const projectData = Object.assign({}, this.props.project, 
+            {status: event.target.value, lastModified: Date.now().toString()}
+        );
+        delete projectData.cards;
+
+        this.props.changeStatus(projectData.id, projectData);
     }
 
     renderStatusOptions = () => {
