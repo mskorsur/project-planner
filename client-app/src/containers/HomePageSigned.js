@@ -44,7 +44,7 @@ class HomePageSigned extends React.Component {
 
         return recentProjects.map((project, index) => {
             return (
-                <tr key={project.id}>
+                <tr key={index}>
                     <th scope="row" className="h5 font-weight-bold">{index + 1}</th>
                     <td className="h5"><Link to={`/project/${project.id}`}>{project.name}</Link></td>
                     <td className="h5 text-capitalize">{project.status}</td>

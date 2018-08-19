@@ -74,7 +74,7 @@ class UserPage extends React.Component {
                     <tr>
                         <th scope="row" className="h5 font-weight-bold">GitHub</th>
                         <td className="h5">
-                            <a href={this.props.currentUser.github} target="blank">
+                            <a href={`http://github.com/${this.props.currentUser.github}`} target="blank">
                             Profile <i className="fas fa-external-link-alt"></i>
                             </a>
                         </td>
