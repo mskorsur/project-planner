@@ -2,6 +2,7 @@ import { ADD_TASK_REQUEST, UPDATE_TASK_REQUEST, REMOVE_TASK_REQUEST, MOVE_TASK_R
 import { addTask, updateTask, removeTask, moveTask } from '../actions/taskActions';
 import { createTask, updateTaskData, removeTaskData } from '../../services/taskService';
 import { activateErrorModal } from '../../utils/NotificationModalsManager';
+import { updateProjectModificationDate } from '../../utils/ProjectDateUpdater';
 
 export const taskActionsMiddleware = store => next => action => {
     if (action.type === ADD_TASK_REQUEST) {
@@ -37,6 +38,7 @@ function handleAddTaskRequest(store, action) {
         }
         else {
             store.dispatch(addTask(parsedResponse.task_data));
+            updateProjectModificationDate(store, parsedResponse.task_data.card);
         }
     })
     .catch(err => {
@@ -56,6 +58,7 @@ function handleUpdateTaskRequest(store, action) {
         }
         else {
             store.dispatch(updateTask(parsedResponse.task_data.id, parsedResponse.task_data));
+            updateProjectModificationDate(store, parsedResponse.task_data.card);
         }
     })
     .catch(err => {
@@ -74,6 +77,7 @@ function handleRemoveTaskRequest(store, action) {
         }
         else {
             store.dispatch(removeTask(action.id, action.card));
+            updateProjectModificationDate(store, parsedResponse.task_data.card);
         }
     })
     .catch(err => {
@@ -97,6 +101,8 @@ function handleMoveTaskRequest(store, action) {
             task.dependencies = task.dependencies.split(',');
             store.dispatch(updateTask(task.id, parsedResponse.task_data));
             store.dispatch(moveTask(task.id, action.source, action.destination));
+
+            updateProjectModificationDate(store, parsedResponse.task_data.card);
         }
     })
     .catch(err => {

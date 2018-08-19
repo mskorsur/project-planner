@@ -4,6 +4,7 @@ import { addTask } from '../actions/taskActions';
 import { createCard, updateCardData, removeCardData } from '../../services/cardService';
 import { getProjectCards } from '../../services/projectService';
 import { activateErrorModal } from '../../utils/NotificationModalsManager';
+import { updateProjectModificationDate } from '../../utils/ProjectDateUpdater';
 
 export const cardActionsMiddleware = store => next => action => {
     if (action.type === ADD_CARD_REQUEST) {
@@ -39,6 +40,7 @@ function handleAddCardRequest(store, action) {
         }
         else {
             store.dispatch(addCard(parsedResponse.card_data));
+            updateProjectModificationDate(store, parsedResponse.card_data.id);
         }
     })
     .catch(err => {
@@ -58,6 +60,7 @@ function handleUpdateCardRequest(store, action) {
         }
         else {
             store.dispatch(updateCard(parsedResponse.card_data.id, parsedResponse.card_data));
+            updateProjectModificationDate(store, parsedResponse.card_data.id);
         }
     })
     .catch(err => {
@@ -75,6 +78,7 @@ function handleRemoveCardRequest(store, action) {
             activateErrorModal(store, parsedResponse.message);
         }
         else {
+            updateProjectModificationDate(store, action.id);
             store.dispatch(removeCard(action.id, action.project));
         }
     })
