@@ -14,14 +14,25 @@ class Task extends React.Component {
         const todayDate = new Date();
         const taskDate = new Date(this.props.task.dueDate);
         const isTaskDueToday = todayDate.toDateString() === taskDate.toDateString();
-
-        return isTaskDueToday
-        ? (
-            <span className="text-warning ml-2">
-                <i className="fas fa-exclamation-triangle"></i>
-            </span>
-          )
-        : '' ;
+        const isTaskOverdue = todayDate > taskDate;
+        
+        if (isTaskDueToday) {
+            return (
+                <span className="text-warning ml-2">
+                    <i className="fas fa-exclamation-triangle"></i>
+                </span>
+            )
+        }
+        else if (isTaskOverdue) {
+            return (
+                <span className="text-danger ml-2">
+                    <i className="fas fa-exclamation-triangle"></i>
+                </span>
+            )
+        }
+        else {
+            return '';
+        }
     }
 
     render() {

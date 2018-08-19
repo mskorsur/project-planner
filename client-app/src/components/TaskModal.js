@@ -93,14 +93,25 @@ class TaskModal extends React.Component {
         const todayDate = new Date();
         const taskDate = new Date(this.props.modalData[TASK].dueDate);
         const isTaskDueToday = todayDate.toDateString() === taskDate.toDateString();
+        const isTaskOverdue =  todayDate > taskDate;
 
-        return isTaskDueToday
-        ? (
-            <span className="text-warning ml-2">
-                <i className="fas fa-exclamation-triangle"></i>Task is due today!
-            </span>
-          )
-        : '' ;
+        if (isTaskDueToday) {
+            return (
+                <span className="text-warning ml-2">
+                    <i className="fas fa-exclamation-triangle"></i>Task is due today!
+                </span>
+            )
+        }
+        else if (isTaskOverdue) {
+            return (
+                <span className="text-danger ml-2">
+                    <i className="fas fa-exclamation-triangle"></i>Task is overdue!
+                </span>
+            )
+        }
+        else {
+            return '';
+        }
     }
 
     renderTaskDependenciesAsListItems = () => {
