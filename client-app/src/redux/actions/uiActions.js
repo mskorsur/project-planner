@@ -1,4 +1,4 @@
-import { ACTIVATE_MODAL, DEACTIVATE_MODAL } from './actionTypes';
+import { ACTIVATE_MODAL, DEACTIVATE_MODAL, SET_STATUS_FILTER } from './actionTypes';
 
 //MODAL ACTIONS
 //data should contain modal type, its data and submit callback function
@@ -21,5 +21,12 @@ export function deactivateModal() {
             modalData: {},
             submit: ''
         }
+    }
+}
+
+export function setStatusFilter(filter) {
+    return {
+        type: SET_STATUS_FILTER,
+        filter
     }
 }

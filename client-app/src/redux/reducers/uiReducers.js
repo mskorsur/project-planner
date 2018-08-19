@@ -1,5 +1,6 @@
 import { ACTIVATE_MODAL,
-         DEACTIVATE_MODAL } from '../actions/actionTypes';
+         DEACTIVATE_MODAL,
+         SET_STATUS_FILTER } from '../actions/actionTypes';
 
 //extend later if necessary
 const initialState = {
@@ -8,7 +9,8 @@ const initialState = {
         modalType: '',
         modalData: {},
         submit: ''
-    }
+    },
+    statusFilter: 'All'
 }
 
 //CASE REDUCERS
@@ -31,9 +33,17 @@ function reduceCurrentModal(currentModalState, action) {
     }
 }
 
+function reduceStatusFilter(filterState, action) {
+    switch(action.type) {
+        case SET_STATUS_FILTER: return action.filter;
+        default: return filterState;
+    }
+}
+
 //DOMAIN REDUCER - extend later if necessary
 export function uiReducer(state = initialState, action) {
     return {
-        currentModal: reduceCurrentModal(state.currentModal, action)
+        currentModal: reduceCurrentModal(state.currentModal, action),
+        statusFilter: reduceStatusFilter(state.statusFilter, action)
     }
 }

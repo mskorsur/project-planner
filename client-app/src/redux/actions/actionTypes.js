@@ -38,6 +38,7 @@ export const MOVE_TASK = 'MOVE_TASK';
 //UI actions
 export const ACTIVATE_MODAL = 'ACTIVATE_MODAL';
 export const DEACTIVATE_MODAL = 'DEACTIVATE_MODAL';
+export const SET_STATUS_FILTER = 'SET_STATUS_FILTER';
 
 //Authentication actions
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';

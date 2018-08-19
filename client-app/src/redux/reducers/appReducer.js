@@ -38,7 +38,8 @@ const initialState = {
             modalType: '',
             modalData: {},
             submit: ''
-        }
+        },
+        statusFilter: 'All'
     }
 }
 
