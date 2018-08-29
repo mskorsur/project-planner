@@ -77,7 +77,7 @@ function handleRemoveTaskRequest(store, action) {
         }
         else {
             store.dispatch(removeTask(action.id, action.card));
-            updateProjectModificationDate(store, parsedResponse.task_data.card);
+            updateProjectModificationDate(store, action.card);
         }
     })
     .catch(err => {
