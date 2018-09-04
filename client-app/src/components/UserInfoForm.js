@@ -115,11 +115,17 @@ class UserInfoForm extends React.Component {
         }
     }
 
+    increaseSectionNumber = (defaultNum) => {
+        return this.props.hasOwnProperty('add') 
+        ? defaultNum += 1
+        : defaultNum
+    }
+
     render() {
         return (
             <form onSubmit={this.handleSubmit} className="ml-3 mb-5">
                 {this.renderAccountFields()}
-                <div className="form-row"><h4 className="font-weight-bold text-muted">2. Personal information</h4></div>
+                <div className="form-row"><h4 className="font-weight-bold text-muted">{this.increaseSectionNumber(1)}. Personal information</h4></div>
                 <div className="form-row">
                     <div className="form-group col-6">
                         <label htmlFor="user-firstname">First name</label>
@@ -144,7 +150,7 @@ class UserInfoForm extends React.Component {
                         value={this.state.organization} onChange={this.handleOrganizationChange} />
                     </div>
                 </div>
-                <div className="form-row"><h4 className="font-weight-bold text-muted">3. Social profiles</h4></div>
+                <div className="form-row"><h4 className="font-weight-bold text-muted">{this.increaseSectionNumber(2)}. Social profiles</h4></div>
                 <div className="form-row">
                     <div className="form-group col-6">
                         <label htmlFor="user-github">GitHub</label>
