@@ -11,6 +11,11 @@ const mapDispatchToProps = dispatch => {
 }
 
 class SignInPage extends React.Component {
+    handleSignInUser = (userData) => {
+        this.props.addUser(userData);
+        this.props.history.push('/');
+    }
+
     handleCancelSignIn = () => {
         this.props.history.push('/');
     }
@@ -24,7 +29,7 @@ class SignInPage extends React.Component {
                     </div>
                 </div>
                 <div className="row mt-4">
-                    <UserInfoForm add={this.props.addUser}
+                    <UserInfoForm add={this.handleSignInUser}
                                 cancel={this.handleCancelSignIn}/>
                 </div>
             </main>
